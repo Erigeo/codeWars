@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import styles from './RegisterStyles'; // Importando os estilos
-import { signUpUser } from '../../../services/UserService';
+import { signUpUser } from '../../services/UserService';
+import { router } from 'expo-router';
 
-export default function RegisterPage({ navigation }) {
+
+export default function Register() {
   const [dados, setDados] = useState({} as any);
 
 
@@ -27,12 +29,13 @@ function atualizarDados(id: string, valor: string){
           //estado: dados.estado,  
         //},
         password: dados.password,
+        meusEventos: []
        // telefone: dados.telefone,
       })
       console.log(resultado)
       if (resultado) {
         console.log("criado")
-        navigation.replace('LoginPage')
+        router.replace("/Login")
 
       }
       }catch(e){

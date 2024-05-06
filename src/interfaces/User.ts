@@ -7,7 +7,7 @@ export interface User {
     nickname?: string;
     endereço?: Endereço;
     tipoDeUser?: String;
-    meusEventos?: Evento[];
+    meusEventos?: [];
 }
 
 export interface Endereço {

@@ -24,12 +24,14 @@ export default StyleSheet.create({
     color: "#fff",
     marginLeft: 50
   },
-  buttonLogin: {
+  buttonArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: "#fff",
-    width: "80%",
-    paddingHorizontal: 120,
+    width: "70%",
+    paddingHorizontal: 110,
     paddingVertical: 15,
-    borderRadius: 10
+    borderRadius: 20
   },
   titleButtonLogin: {
     fontSize: 30,

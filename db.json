@@ -3,7 +3,10 @@
     {
       "email": "georg@gmail.com",
       "password": "$2a$10$gsseN58X.KJduU3cWdKz6.jCfXY4vIg2uRLZpyjpG1gl512QstIpO",
-      "id": 1
+      "id": 1,
+      "eventos": [
+        "abacaxi"
+      ]
     },
     {
       "email": "geo@gmail.com",
@@ -26,6 +29,13 @@
       "password": "$2a$10$riSlQZ5TNeZwTKR/nq0d9.e9LJ.5OPo7GrKt.pl.DXdeqMrhHT9Eq",
       "tipoDeUser": "Manager",
       "id": 5
+    },
+    {
+      "email": "joao@gmail.com",
+      "password": "$2a$10$mVZwryyR9GNx6QzLycCiHuuNeM4S1blswXoIFhNeuEZRrV/yCInTi",
+      "tipoDeUser": "User",
+      "meusEventos": [],
+      "id": 6
     }
   ]
 }

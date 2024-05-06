@@ -3,7 +3,7 @@ import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import styles from './ProfileStyles'; // Importando os estilos
 
-export default function LoginPage() {
+export default function Profile() {
   return (
     <ScrollView style={styles.container}>
 

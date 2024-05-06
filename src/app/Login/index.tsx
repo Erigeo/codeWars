@@ -3,12 +3,13 @@ import "core-js/stable/atob";
 import {Snackbar} from 'react-native-paper'
 import { Pressable, Text, TextInput, View } from 'react-native';
 import styles from './LoginStyles'; // Importando os estilos
-import { signIn } from '../../../services/Auth';
+import { signIn } from '../../services/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
+import { Link, router } from 'expo-router';
 
 
-export default function LoginPage({ navigation }) {
+export default function Login() {
 const [email, setEmail] = useState('')
 const [password, setPassword] = useState('')
 const [visible, setVisible] = useState(false);
@@ -34,7 +35,7 @@ async function login(){
 
     AsyncStorage.setItem('userId', userId)    
   
-   navigation.replace('ProfilePage')
+   router.replace("teste2");
 
   }
    
@@ -57,9 +58,11 @@ async function login(){
         <Text style={styles.buttonText}>Entrar</Text>
       </Pressable>
       
-      <Pressable onPress={() => navigation.navigate('RegisterPage')}>
+      <Link replace href={"Register"} asChild>
+      <Pressable>
         <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
       </Pressable>
+      </Link>
 
       <Snackbar
         visible={visible}
