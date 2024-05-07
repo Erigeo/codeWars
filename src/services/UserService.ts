@@ -17,5 +17,15 @@ export async function signUpUser(user: User){
     console.log(error)
     return null
   }
+}
 
+export async function getUserData(id: String){
+  try{
+    const resultado = await Api.get('/users/'+ id)
+    console.log(resultado.data)
+    return resultado.data
+  }catch(e){
+    console.log(e)
+    return null
+  }
 }

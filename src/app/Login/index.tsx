@@ -7,6 +7,8 @@ import { signIn } from '../../services/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import { Link, router } from 'expo-router';
+import { getUserData } from '../../services/UserService';
+import { User } from '../../interfaces/User';
 
 
 export default function Login() {
@@ -14,6 +16,7 @@ const [email, setEmail] = useState('')
 const [password, setPassword] = useState('')
 const [visible, setVisible] = useState(false);
 const onDismissSnackBar = () => setVisible(false);
+const [dados, setDados] = useState({} as User)
 
 
 
@@ -26,16 +29,26 @@ async function login(){
   if(token){
     
     //const { token } = resultado
-   
+   console.log("uii")
     AsyncStorage.setItem('token', token)
     const decodeToken = jwtDecode(token) as any
     const userId = decodeToken.sub
     console.log(decodeToken)
-
-
+    console.log("kkk")
     AsyncStorage.setItem('userId', userId)    
-  
-   router.replace("teste2");
+
+    //const userData = await getUserData(userId)
+    //if(userData){
+      //setDados(userData)
+    //}
+
+   
+      router.replace('Home')
+    
+    
+    
+    
+   
 
   }
    

@@ -1,9 +1,9 @@
 import React from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import styles from './ProfileStyles'; // Importando os estilos
+import styles from '../../ProfileStyles'; // Importando os estilos
 
-export default function Profile() {
+export default function Perfil() {
   return (
     <ScrollView style={styles.container}>
 

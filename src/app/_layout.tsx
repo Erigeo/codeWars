@@ -26,11 +26,6 @@ export default function _layout() {
             headerShown: false
             
         }} />
-         <Stack.Screen name="Profile/index" options={{
-            title: 'Login Modal',
-            headerBackVisible: false
-            
-        }} />
         <Stack.Screen name="(tabs)" options={{
             title: 'Login Modal',
             headerShown: false

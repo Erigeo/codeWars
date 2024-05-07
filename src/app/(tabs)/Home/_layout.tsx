@@ -6,7 +6,7 @@ export default function _layout() {
   return (
     <Stack>
         <Stack.Screen name="index" options={{
-            title: 'Posts'
+            title: 'User', headerShown: false
         }} />
     </Stack>
   )

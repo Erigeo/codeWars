@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import styles from './Home/HomeStyles'; // Adjust the path as necessary
+import styles from './HomeStyles'; // Adjust the path as necessary
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 
 export default function Page() {
@@ -10,7 +10,7 @@ export default function Page() {
   
 
   useEffect(() => {
-    AsyncStorage.removeItem('token')
+   // AsyncStorage.removeItem('token')
     async function verifyLogin() {
       
       try {
@@ -19,7 +19,7 @@ export default function Page() {
       
       if(token){
         
-        <Link href="/Profile"></Link>
+        router.replace('Home')
       }
       setCarregandoPage(false)
       }
