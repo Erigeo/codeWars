@@ -4,10 +4,15 @@
       "email": "georg@gmail.com",
       "password": "$2a$10$gsseN58X.KJduU3cWdKz6.jCfXY4vIg2uRLZpyjpG1gl512QstIpO",
       "id": 1,
-      "tipoDeUser" : "User",
-      "eventos": [
-        "abacaxi"
-      ]
+      "tipoDeUser": "User",
+      "eventos": []
+    },
+    {
+      "email": "geo@gmail.com",
+      "password": "$2a$10$x.awcVoadAlX5fItfQdssOhQf8vHlynYeHC9mRkYk5Mcid5d7zCTC",
+      "tipoDeUser": "Manager",
+      "eventos": [],
+      "id": 2
     }
   ]
 }

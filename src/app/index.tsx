@@ -10,7 +10,7 @@ export default function Page() {
   
 
   useEffect(() => {
-   // AsyncStorage.removeItem('token')
+    AsyncStorage.removeItem('token')
     async function verifyLogin() {
       
       try {

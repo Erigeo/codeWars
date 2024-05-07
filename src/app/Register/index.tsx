@@ -29,7 +29,7 @@ function atualizarDados(id: string, valor: string){
           //estado: dados.estado,  
         //},
         password: dados.password,
-        meusEventos: []
+        eventos: []
        // telefone: dados.telefone,
       })
       console.log(resultado)
