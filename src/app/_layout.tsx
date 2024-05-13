@@ -31,6 +31,11 @@ export default function _layout() {
             headerShown: false
             
         }} />
+        <Stack.Screen name="RegisterEvent/index" options={{
+            title: 'teste',
+            headerShown: true
+            
+        }} />
     
    </Stack>
   )

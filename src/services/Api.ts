@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const Api = axios.create({
-    baseURL: "http://10.112.163.165:3000",
+    baseURL: "http://192.168.0.7:3000", //mude o ip sempre que mudar de wifi!
 
 })
 

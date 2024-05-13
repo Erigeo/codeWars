@@ -10,7 +10,7 @@ export default function Page() {
   
 
   useEffect(() => {
-    AsyncStorage.removeItem('token')
+    //AsyncStorage.removeItem('token') //comente para funcionar a persistência de login
     async function verifyLogin() {
       
       try {

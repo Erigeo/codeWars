@@ -7,7 +7,7 @@ export interface User {
     nickname?: string;
     endereço?: Endereço;
     tipoDeUser?: String;
-    eventos?: [];
+    //eventos?: []; jsonserver é limitado, nao consigo add novos eventos a um array.
 }
 
 export interface Endereço {
@@ -16,14 +16,17 @@ export interface Endereço {
 }
 
 export interface Evento {
-    eventoId: string;
-    donoId: string;
+    id: string;
+    userId: string;
     eventoNome: string;
     numParticipantes?: number;
-    participantes: User[],
+    participantes?: User[],
     imagem?: string;
     dataInicio: Date;
-    etapas: Etapas[]
+    etapas?: [],
+    descricao?: string;
+    local: string;
+    regras?: string
 }
 
 export interface Etapas {

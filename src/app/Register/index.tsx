@@ -29,7 +29,6 @@ function atualizarDados(id: string, valor: string){
           //estado: dados.estado,  
         //},
         password: dados.password,
-        eventos: []
        // telefone: dados.telefone,
       })
       console.log(resultado)

@@ -1,4 +1,4 @@
-import { User } from "../interfaces/User";
+import { Evento, User } from "../interfaces/User";
 import Api from "./Api";
 
 
@@ -22,10 +22,40 @@ export async function signUpUser(user: User){
 export async function getUserData(id: String){
   try{
     const resultado = await Api.get('/users/'+ id)
-    console.log(resultado.data)
+    //console.log(resultado.data)
     return resultado.data
   }catch(e){
     console.log(e)
     return null
   }
 }
+
+export async function getEventData(){
+  try{
+    const resultado =  await Api.get('/eventos')
+    return resultado.data
+  }catch(e){
+    console.log(e)
+    return null
+  }
+}
+
+export async function createEvent(Evento: Evento){
+  if(!Evento) return null;
+  try{
+    const resultado = await Api.post('/eventos', Evento)
+    console.log(resultado.data)
+   
+  
+  }catch(e){
+    console.log(e)
+    return null
+  }
+}
+
+
+export async function verifyEventsByID(userId: String ){
+
+}
+
+

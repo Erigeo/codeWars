@@ -1,18 +1,49 @@
 {
   "users": [
     {
-      "email": "georg@gmail.com",
-      "password": "$2a$10$gsseN58X.KJduU3cWdKz6.jCfXY4vIg2uRLZpyjpG1gl512QstIpO",
-      "id": 1,
-      "tipoDeUser": "User",
-      "eventos": []
-    },
-    {
       "email": "geo@gmail.com",
-      "password": "$2a$10$x.awcVoadAlX5fItfQdssOhQf8vHlynYeHC9mRkYk5Mcid5d7zCTC",
+      "password": "$2a$10$PfQcdrAXAOu1XXhUsE.QkeqD47b10QdqkcNsgyLbwA3vkHFgpqV4.",
       "tipoDeUser": "Manager",
       "eventos": [],
-      "id": 2
+      "id": 1
+    }
+  ],
+  "eventos": [
+    {
+      "id": "c814251a-b601-4fb8-9845-a598f1691bea",
+      "userId": "1",
+      "eventoNome": "COPA NEON GENESIS",
+      "numParticipantes": "4",
+      "participantes": [
+        "12345778",
+        "abaacaxii"
+      ],
+      "imagem": "https://transform.nws.ai/https%3A%2F%2Fcdn.thenewsroom.io%2Fplatform%2Fstory_media%2F1288806935%2F720x511-Magic-WorldChampionship-XXVIII-Logo.png/w_1200,c_limit/",
+      "etapas": [],
+      "descricao": "",
+      "local": "natal"
+    },
+    {
+      "id": "cea",
+      "userId": "123",
+      "eventoNome": "co",
+      "numParticipantes": "4",
+      "participantes": [],
+      "imagem": "https://transform.nws.ai/https%3A%2F%2Fcdn.thenewsroom.io%2Fplatform%2Fstory_media%2F1288806935%2F720x511-Magic-WorldChampionship-XXVIII-Logo.png/w_1200,c_limit/",
+      "etapas": [],
+      "descricao": "",
+      "local": "natal"
+    },
+    {
+      "id": "kkkkk",
+      "userId": "1",
+      "eventoNome": "AYAYA AYAYA",
+      "numParticipantes": "4",
+      "participantes": [],
+      "imagem": "https://transform.nws.ai/https%3A%2F%2Fcdn.thenewsroom.io%2Fplatform%2Fstory_media%2F1288806935%2F720x511-Magic-WorldChampionship-XXVIII-Logo.png/w_1200,c_limit/",
+      "etapas": [],
+      "descricao": "",
+      "local": "natal"
     }
   ]
 }
