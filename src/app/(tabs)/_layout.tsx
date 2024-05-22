@@ -2,9 +2,11 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { Entypo } from '@expo/vector-icons';
+import { UserProvider } from '../../contexts/AuthContext';
 
 export default function _layout() {
   return (
+    
     <Tabs screenOptions={{
         tabBarStyle: {
             backgroundColor: '#3D5D75',

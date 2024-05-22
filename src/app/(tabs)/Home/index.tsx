@@ -7,27 +7,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getEventData, getUserData } from '../../../services/UserService'
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
+import { useUserData } from '../../../contexts/AuthContext';
 
 export default function Home() {
-  const [dataUser, setDataUser] = useState({} as User)
+  const { dataUser, collectData, Renderize } = useUserData();
   const [eventList, setEventList] = useState<Evento[]>([])
 
   useEffect(()=> {
-    console.log("passei aqui")
-    async function collectData() {
-      try{
-       
-      const idUser = await AsyncStorage.getItem('userId')
-      const resultado = await getUserData(idUser)
-      if(resultado){
-        setDataUser(resultado)
-        //console.log(resultado)
-      }
-    }catch(e){
-      console.log(e)
-    }
-  }
-
   async function collectUserEvent(){
     
     try{
@@ -50,15 +36,20 @@ export default function Home() {
   collectData(), collectUserEvent()
   
   },
-  [])
+  [Renderize])
 
 
 
   return (
-    <View style={{flex:1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2D3841'}}>
-      <Text style={styles.titleMyEvents}>Meus Eventos</Text>
-      {/* <Text> {JSON.stringify(eventList[0].id)} </Text>  */} 
+    <View style={{flex:1, backgroundColor: '#2D3841'}}>
+      <View style={{ maxWidth: '40%', marginLeft: 5}}>
+           <Text style={styles.titleMyEvents}>Meus Eventos</Text>
+      </View>
       
+      {/* <Text> {JSON.stringify(eventList[0].id)} </Text>  */} 
+      <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+
+     
         {dataUser.tipoDeUser == "Manager" && eventList.length==null ? (
           <View style={styles.myevents}>
             <Text style={styles.myEventsDescription}>Voce ainda não criou nenhum evento!</Text>
@@ -76,6 +67,7 @@ export default function Home() {
           <View style={styles.myeventsContainer}>
             <FlatList
             data={eventList}
+            style={{ maxHeight: '80%'}}
             renderItem={({item}) => { return (
             <View style={styles.myevents}> 
               <Image style={styles.imageContainer} source={item.imagem}></Image>
@@ -100,11 +92,10 @@ export default function Home() {
                   </Pressable>
                 </Link>
               </View>
+              
             </View>
-            
           )}}
             keyExtractor={item => item.id}
-            horizontal={true}
             showsHorizontalScrollIndicator={false}
         />
         <View style={styles.buttonCreateContainer}> 
@@ -118,7 +109,7 @@ export default function Home() {
           
   ): null
 }
-
+</View>
 
 
 {dataUser.tipoDeUser == "User"  ? (
@@ -141,23 +132,16 @@ export default function Home() {
 const styles = StyleSheet.create({
   myeventsContainer: {
     flex: 1,
-    maxHeight: 200,
-    width: '100%',
+    width: '95%',
     marginTop: 10,
-    
-    
   },
   myevents: {
-    flex: 1,
     flexDirection: 'row',
     borderRadius: 15,
     backgroundColor: '#364753',
     width: 400,
     height: 150,
-    marginHorizontal: 15,
-    
-    
-
+    marginBottom: 10,
     
   },
   buttonSearchEvents: {
@@ -172,7 +156,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#FFFFFF',
     fontSize: 24,
-    marginLeft: -160
+    
   },
   myEventsDescription: {
     color: '#FFFFFF',
@@ -254,14 +238,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 15,
     borderColor: '#3D5D75',
-    borderWidth: 2
+    borderWidth: 2,
   },
   buttonCreateContainer: {
-    flex: 1,
+    
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 10
+    marginBottom: 10,
   
     
     

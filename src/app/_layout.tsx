@@ -1,12 +1,14 @@
 import { View, Text, Button } from 'react-native'
 import React from 'react'
 import { Stack, useRouter } from 'expo-router'
+import { UserProvider } from '../contexts/AuthContext';
 
 export default function _layout() {
     const router = useRouter();
   
     return (
-   <Stack
+        <UserProvider>
+        <Stack
     screenOptions={{
         // headerStyle: {
         //     backgroundColor: 'black'
@@ -37,6 +39,7 @@ export default function _layout() {
             
         }} />
     
-   </Stack>
+     </Stack>
+     </UserProvider>
   )
 }

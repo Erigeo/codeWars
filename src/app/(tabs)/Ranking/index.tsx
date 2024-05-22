@@ -5,7 +5,7 @@ import { Link } from 'expo-router'
 export default function Ranking() {
   return (
     <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text> cuzinho ranking</Text>
+        <Text>ranking</Text>
     </View>
   )
 }

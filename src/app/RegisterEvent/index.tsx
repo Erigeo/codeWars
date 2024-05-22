@@ -6,10 +6,12 @@ import { createEvent } from '../../services/UserService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './RegisterEventStyles';
 import 'react-native-get-random-values';
+import { useUserData } from '../../contexts/AuthContext';
 
 
 export default function RegisterEvent() {
   const [dados, setDados] = useState({} as any);
+  const {collectData, handleClick} = useUserData();
 
 
 
@@ -31,11 +33,7 @@ function atualizarDados(id: string, valor: string){
         descricao: '',
         local: dados.local,
       })
-      console.log(resultado)
-      if (resultado) {
-        console.log("criado")
-       // router.replace("/Login")
-      }
+      handleClick()
       }catch(e){
         console.log(e)
       }
