@@ -44,6 +44,17 @@
       "etapas": [],
       "descricao": "",
       "local": "NAtal"
+    },
+    {
+      "id": "68985422-726d-4761-8ce9-9e38dd299eac",
+      "userId": "1",
+      "eventoNome": "abacaxi",
+      "numParticipantes": "01",
+      "participantes": [],
+      "imagem": "https://transform.nws.ai/https%3A%2F%2Fcdn.thenewsroom.io%2Fplatform%2Fstory_media%2F1288806935%2F720x511-Magic-WorldChampionship-XXVIII-Logo.png/w_1200,c_limit/",
+      "etapas": [],
+      "descricao": "",
+      "local": "uiui"
     }
   ]
 }

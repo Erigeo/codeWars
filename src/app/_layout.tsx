@@ -2,12 +2,14 @@ import { View, Text, Button } from 'react-native'
 import React from 'react'
 import { Stack, useRouter } from 'expo-router'
 import { UserProvider } from '../contexts/AuthContext';
+import { UserEventProvider } from '../contexts/EventContext';
 
 export default function _layout() {
     const router = useRouter();
   
     return (
         <UserProvider>
+        <UserEventProvider>
         <Stack
     screenOptions={{
         // headerStyle: {
@@ -38,8 +40,14 @@ export default function _layout() {
             headerShown: true
             
         }} />
+        <Stack.Screen name="EventoX/index" options={{
+            title: 'teste1',
+            headerShown: true
+            
+        }} />
     
      </Stack>
+     </UserEventProvider>
      </UserProvider>
   )
 }

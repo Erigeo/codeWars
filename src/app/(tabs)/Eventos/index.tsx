@@ -80,8 +80,4 @@ const styles = StyleSheet.create({
       fontSize: 14,
       color: 'grey',
     }
-<<<<<<< HEAD
   });
-=======
-  });
->>>>>>> 9e89e82 (adicionei ContextApi para tornar dados globais, dessa forma conseguimos renderizar componentes ao por exemplo criar um evento. Dessa forma, todos os componentes que existirem relacionados a exibição desses eventos irão ser atualizados.)

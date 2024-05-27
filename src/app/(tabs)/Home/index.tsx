@@ -1,42 +1,32 @@
 import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native'
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { Evento, User } from '../../../interfaces/User'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getEventData, getUserData } from '../../../services/UserService'
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { useUserData } from '../../../contexts/AuthContext';
+import { useUserEventData } from '../../../contexts/EventContext';
 
 export default function Home() {
   const { dataUser, collectData, Renderize } = useUserData();
-  const [eventList, setEventList] = useState<Evento[]>([])
+  const {eventList, collectUserEvent} = useUserEventData();
 
   useEffect(()=> {
-  async function collectUserEvent(){
-    
-    try{
-      const idUser = await AsyncStorage.getItem('userId')
-      const resultado = await getEventData()
-      if(resultado){
-        const resultadoFiltrado = resultado.filter((Evento: Evento)=> {
-          return Evento.userId == idUser;
-        })
-       
-        setEventList(resultadoFiltrado)
-
-      }
-    }catch(e){
-      console.log("falhoooou aquiii")
-
-    }
-  }
-    
+  
   collectData(), collectUserEvent()
   
   },
   [Renderize])
+
+  const handlePress = (id: string) => {
+    router.push({
+      pathname: '/EventoX',
+      params:{ id },
+    });
+  };
 
 
 
@@ -86,11 +76,11 @@ export default function Home() {
                       <Text style={styles.titleEventDate}> 02/05/24</Text>
                     </View>
                   </View>
-                <Link href={"RegisterEvent"} asChild>
-                  <Pressable style={styles.buttonSeeEvent}>
+                
+                  <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id)} >
                     <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
                   </Pressable>
-                </Link>
+                
               </View>
               
             </View>
