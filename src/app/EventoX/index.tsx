@@ -63,38 +63,59 @@ export default function EventoX(){
                         selectedButton === 1 && styles.selectedText
                     ]}>Detalhes</Text>
                   </Pressable>
-                
-                
                   <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(2)}>
                     <Text style={[
                         selectedButton === 2 && styles.selectedText
                     ]}>Torneio</Text>
                   </Pressable>
-              
-                
                   <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(3)}>
                     <Text style={[
                         selectedButton === 3 && styles.selectedText
                     ]}>Rodada</Text>
                   </Pressable>
-               
-               
                   <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(4)}>
                     <Text style={[
                         selectedButton === 4 && styles.selectedText
                     ]}>Grade</Text>
                   </Pressable>
-                
-                
-                  
-                 
-                  
             </View>
+            
+            {selectedButton == 1? (
+              <View>
+                <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
+                  
+              </View>
+            ): null}
+
+            {selectedButton == 2? (
+              <View>
+              <Text style={styles.TextTitleDetalhes}>Torneio</Text>
+            </View>
+            ): null}
+
+             {selectedButton == 3? (
+              <View>
+              <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+            </View>
+            ): null}
+
+            {selectedButton == 4? (
+              <View>
+              <Text style={styles.TextTitleDetalhes}>Grade</Text>
+            </View>
+            ): null}
+            
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+  TextTitleDetalhes:{
+    color: 'white',
+    fontSize: 24,
+    margin: 20
+  }
+  ,
   selectedText: {
     color: 'white'
   },
