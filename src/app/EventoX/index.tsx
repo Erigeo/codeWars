@@ -11,6 +11,10 @@ import { useUserEventData } from "../../contexts/EventContext";
 export default function EventoX(){
     const { dataUser, collectData, Renderize } = useUserData();
     const {eventList, collectUserEvent, collectEventDataById} = useUserEventData();
+    const [selectedButton, setSelectedButton] = useState(null);
+    const handleButtonPress = (buttonIndex) => {
+      setSelectedButton(buttonIndex);
+    };
 
     const  {id}  = useLocalSearchParams();
     const item = collectEventDataById(id as string)
@@ -26,7 +30,6 @@ export default function EventoX(){
 
     return(
         <View style={styles.mainContainer}>
-            <Text>{id}</Text>
             <View style={styles.myevents}> 
               <Image style={styles.imageContainer} source={item.imagem}></Image>
             
@@ -44,19 +47,77 @@ export default function EventoX(){
                       <Text style={styles.titleEventDate}> 02/05/24</Text>
                     </View>
                   </View>
-                <Link href={"EventoX"} asChild>
+                
                   <Pressable style={styles.buttonSeeEvent}>
-                    <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
+                    <Text style={styles.buttonMyEventText1}>Iniciar Evento</Text>
                   </Pressable>
-                </Link>
+                
               </View>
               
+            </View>
+
+            <View style={styles.navbarcontainer} >
+                
+                  <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(1)}>
+                    <Text style={[
+                        selectedButton === 1 && styles.selectedText
+                    ]}>Detalhes</Text>
+                  </Pressable>
+                
+                
+                  <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(2)}>
+                    <Text style={[
+                        selectedButton === 2 && styles.selectedText
+                    ]}>Torneio</Text>
+                  </Pressable>
+              
+                
+                  <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(3)}>
+                    <Text style={[
+                        selectedButton === 3 && styles.selectedText
+                    ]}>Rodada</Text>
+                  </Pressable>
+               
+               
+                  <Pressable style={styles.navbarButtons} onPress={()=> handleButtonPress(4)}>
+                    <Text style={[
+                        selectedButton === 4 && styles.selectedText
+                    ]}>Grade</Text>
+                  </Pressable>
+                
+                
+                  
+                 
+                  
             </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+  selectedText: {
+    color: 'white'
+  },
+  navbarButtons: {
+    backgroundColor: '#3D5D75',
+    borderRightColor: 'black',
+    borderRightWidth: 0.2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '25%',
+    justifyContent: 'center'
+    
+  }
+  ,
+   navbarcontainer: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 35,
+    
+    justifyContent: 'space-between',
+  
+   }
+  ,
     mainContainer: {
         backgroundColor: '#364753',
         flex: 1,
