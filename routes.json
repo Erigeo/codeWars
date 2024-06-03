@@ -1,0 +1,15 @@
+{
+    "/users/:id/eventos": "/eventos?userId=:id",
+    "/users/:id/eventos/:eventoId": "/eventos?userId=:id&id=:eventoId",
+
+    
+    "/users/:userId/eventos/:eventoId/etapas/:etapaId": "/etapas/:etapaId",
+    "/users/:userId/eventos/:eventoId/etapas": "/etapas?eventoId=:eventoId",
+
+    "/users/:userId/eventos/:eventoId/etapas/:etapasId/mesas": "/mesas?etapasId=:etapasId",
+   
+    "/eventos/:id/etapas": "/etapas?eventoId=:id",
+    "/eventos/:eventoId/etapas/:etapaId": "/etapas/:etapaId",
+    "/eventos/:eventoId/etapas/:etapaId/mesas": "/etapas/:etapaId"
+  }
+  

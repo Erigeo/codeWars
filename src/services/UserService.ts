@@ -1,4 +1,4 @@
-import { Evento, User } from "../interfaces/User";
+import { Etapas, Evento, User } from "../interfaces/User";
 import Api from "./Api";
 
 
@@ -45,8 +45,18 @@ export async function createEvent(Evento: Evento){
   try{
     const resultado = await Api.post('/eventos', Evento)
     console.log(resultado.data)
-   
-  
+    return Evento.id
+  }catch(e){
+    console.log(e)
+    return null
+  }
+}
+
+export async function createEtapa(Etapa: Etapas){
+  if(!Etapa) return null;
+  try{
+    const resultado = await Api.post('/etapas', Etapa)
+    console.log(resultado.data)
   }catch(e){
     console.log(e)
     return null

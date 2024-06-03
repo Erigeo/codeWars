@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Pressable} from "react-native";
+import { View, StyleSheet, Text, Pressable, FlatList} from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -7,6 +7,7 @@ import { Link } from 'expo-router'
 import { useUserData } from "../../contexts/AuthContext";
 import { useLocalSearchParams } from 'expo-router';
 import { useUserEventData } from "../../contexts/EventContext";
+import { Feather } from '@expo/vector-icons';
 
 export default function EventoX(){
     const { dataUser, collectData, Renderize } = useUserData();
@@ -82,15 +83,35 @@ export default function EventoX(){
             
             {selectedButton == 1? (
               <View>
-                <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
-                  
+                 <View style={styles.textdetailscontainer}> 
+                  <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
+                  <Feather name="edit" size={20} color="gray" />
+                 </View>
+                  <Text style={styles.TextDetails}> {item.descricao}</Text>
+                 <View style={styles.textdetailscontainer}> 
+                  <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
+                  <Feather name="edit" size={20} color="gray" />
+                 </View>
+                 <Text style={styles.TextDetails}> {item.descricao}</Text>
+                 <View style={styles.textdetailscontainer}> 
+                  <Text style={styles.TextTitleDetalhes}>Premiação</Text>
+                  <Feather name="edit" size={20} color="gray" />
+                 </View>
+                 <Text style={styles.TextDetails}> {item.descricao}</Text>
+                
+                
               </View>
+              
             ): null}
 
             {selectedButton == 2? (
               <View>
-              <Text style={styles.TextTitleDetalhes}>Torneio</Text>
-            </View>
+                <View style={styles.textTitleContainer}> 
+                  <Text style={styles.TextTitleTorneio}>Torneio </Text> 
+                </View>
+               
+
+              </View>
             ): null}
 
              {selectedButton == 3? (
@@ -110,6 +131,31 @@ export default function EventoX(){
 }
 
 const styles = StyleSheet.create({
+  matchsContainer: {
+
+  }
+  ,
+  textTitleContainer: {
+    alignItems: 'center'
+  },
+
+  TextTitleTorneio:{
+    color: 'white',
+    fontSize: 24,
+    margin: 20,
+  }
+  ,
+  textdetailscontainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: 200,
+    justifyContent: 'space-between'
+  },
+  TextDetails: {
+    color: 'white',
+    fontSize: 12,
+    marginHorizontal: 30
+  },
   TextTitleDetalhes:{
     color: 'white',
     fontSize: 24,
