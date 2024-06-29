@@ -10,34 +10,31 @@ import { useUserEventData } from "../../contexts/EventContext";
 import { Feather } from '@expo/vector-icons';
 
 export default function EventoX(){
-    const { dataUser, collectData, Renderize } = useUserData();
-    const {event, collectUserEvent, collectEventDataById} = useUserEventData();
-    const [selectedButton, setSelectedButton] = useState(null);
-    const handleButtonPress = (buttonIndex) => {
-      setSelectedButton(buttonIndex);
-    };
+  const { dataUser, collectData, Renderize } = useUserData();
+  const {event, collectEventDataById} = useUserEventData();
+  const [selectedButton, setSelectedButton] = useState(null);
+  const handleButtonPress = (buttonIndex) => {
+    setSelectedButton(buttonIndex);
+  };
 
-    const  {id}  = useLocalSearchParams();
-    const item = collectEventDataById(id as string)
-   // console.log(item.id)
-
-
-  useEffect(()=> {
+    const { id } = useLocalSearchParams();
   
-  collectData(), collectUserEvent()
 
-  
-  },
-  [Renderize])
-
+    useEffect(() => {
+      if (id) {
+        collectEventDataById(id as string);
+        console.log("aaaa");
+      }
+    }, [id]); // executa apenas quando id mudar
+ 
 
     return(
         <View style={styles.mainContainer}>
             <View style={styles.myevents}> 
-              <Image style={styles.imageContainer}></Image>
+              <Image style={styles.imageContainer} source={event.imagePath}></Image>
             
                <View style={styles.titleContainer}>
-                  <Text style={styles.titleEventName}> </Text>  
+                  <Text style={styles.titleEventName}> {event.name} </Text>  
 
                   <View style={styles.infoCardsContainer}>
                 
@@ -89,17 +86,17 @@ export default function EventoX(){
                   <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                  <Text style={styles.TextDetails}> {item.description}</Text>
+                  <Text style={styles.TextDetails}> {event.description}</Text>
                  <View style={styles.textdetailscontainer}> 
                   <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                 <Text style={styles.TextDetails}> {item.description}</Text>
+                 <Text style={styles.TextDetails}> {event.description}</Text>
                  <View style={styles.textdetailscontainer}> 
                   <Text style={styles.TextTitleDetalhes}>Premiação</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                 <Text style={styles.TextDetails}> {item.description}</Text>
+                 <Text style={styles.TextDetails}> {event.description}</Text>
                 
                 
               </View>
