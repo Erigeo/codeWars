@@ -18,7 +18,7 @@ export async function signUpManager(user: Manager){
   }
 }
 
-export async function getUserData(id: string) {
+export async function getUserDataManager(id: string) {
   try {
     const token = await AsyncStorage.getItem('token'); 
     const resultado = await Api.get('api/users/manager/' + id, {

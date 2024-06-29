@@ -20,7 +20,8 @@ export default function Login({ onSuccess }) {
 
 
 interface CustomJwtPayload extends JwtPayload {
-  id: string; // Adicione outras propriedades conforme necessário
+  id: string;
+  role: string; // Adicione outras propriedades conforme necessário
 }
 
   async function handleLogin() {
@@ -35,7 +36,10 @@ interface CustomJwtPayload extends JwtPayload {
         const decodeToken = jwtDecode<CustomJwtPayload>(token);
         console.log(decodeToken);
         const userId = decodeToken.id;
+        const userRole = decodeToken.role;
+        console.log(userRole)
         await AsyncStorage.setItem('userId', userId);
+        await AsyncStorage.setItem('userRole', userRole);
   
         onSuccess();
       }

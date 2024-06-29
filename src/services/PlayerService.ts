@@ -24,7 +24,7 @@ export async function signUpPlayer(user: Player){
 export async function getUserData(id: string) {
   try {
     const token = await AsyncStorage.getItem('token'); 
-    const resultado = await Api.get('api/users/players/' + id, {
+    const resultado = await Api.get('api/players/' + id, {
       headers: {
         Authorization: `Bearer ${token}`
       }

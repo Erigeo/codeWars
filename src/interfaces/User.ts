@@ -11,7 +11,7 @@ export interface Player {
     winrate?: number; 
     deckId?: string;
     eventPoints?: number;
-    appliedEventsId?: string[];
+    appliedEventsId?: Events[];
     opponentIds?: string[];
     historicoEventos?: Event[];
     opponentsMatchWinrate?: number;

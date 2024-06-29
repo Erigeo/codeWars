@@ -11,13 +11,11 @@ import { useUserData } from '../../../contexts/AuthContext';
 import { useUserEventData } from '../../../contexts/EventContext';
 
 export default function Home() {
-  const { dataUser, collectData, Renderize } = useUserData();
+  const { dataUser, collectData, Renderize, dataManager} = useUserData();
 
   useEffect(()=> {
   
   collectData()
-  
-  
   },
   [Renderize])
 
@@ -40,7 +38,7 @@ export default function Home() {
       <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
 
      
-        {dataUser.role == "ROLE_MANAGER" && dataUser.events.length==0 ? (
+        { dataManager && dataManager.role == "ROLE_MANAGER"  && dataManager.events.length==0 ? (
           <View style={styles.myevents1}>
             <Text style={styles.myEventsDescription}>Voce ainda não criou nenhum evento!</Text>
             <Link href={"RegisterEvent"} asChild>
@@ -53,10 +51,10 @@ export default function Home() {
 ): null
 }
 
-          {dataUser.role == "ROLE_MANAGER" && dataUser.events.length>=1 ? (
+          { dataManager && dataManager.role == "ROLE_MANAGER"  && dataManager.events.length>=1 ? (
           <View style={styles.myeventsContainer}>
             <FlatList
-            data={dataUser.events}
+            data={dataManager.events}
             style={{ maxHeight: '80%'}}
             renderItem={({item}) => { return (
             <View style={styles.myevents}> 
@@ -102,7 +100,7 @@ export default function Home() {
 </View>
 
 
-{dataUser.role == "ROLE_USER" && dataUser.events.length == 0  ? (
+{  dataUser && dataUser.role == "ROLE_PLAYER"  && dataUser.appliedEventsId.length == 0 ? (
        
         <View style={styles.myevents}>
           <Text style={styles.myEventsDescription}>Voce ainda não está participando de nenhum evento!</Text>
