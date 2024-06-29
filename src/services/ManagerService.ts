@@ -10,8 +10,6 @@ export async function signUpManager(user: Manager){
   console.log(user.password)
   try {
     const resultado = await Api.post('api/users/register/manager', user)
-    console.log('aquii')
-    console.log(resultado.data)
     return resultado.data
   }
   catch(error){
@@ -22,14 +20,12 @@ export async function signUpManager(user: Manager){
 
 export async function getUserData(id: string) {
   try {
-    console.log("lets")
     const token = await AsyncStorage.getItem('token'); 
     const resultado = await Api.get('api/users/manager/' + id, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado.data)
     return resultado.data;
   } catch (e) {
     console.log(e);
@@ -62,7 +58,6 @@ export async function createEvent(Evento: Events) {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado.data);
     return resultado.data
   } catch (e) {
     console.log(e);

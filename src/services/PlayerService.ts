@@ -11,7 +11,6 @@ export async function signUpPlayer(user: Player){
   try {
     const resultado = await Api.post('users/register/player', user)
     console.log('aquii')
-    console.log(resultado.data)
     return resultado.data
   }
   catch(error){
@@ -42,7 +41,7 @@ export async function getEventById(id: string) {
   try {
     const token = await AsyncStorage.getItem('token'); // Obtém o token armazenado
 
-    const resultado = await Api.get('api/events/' + id + '/get', {
+    const resultado = await Api.get('api/events/manager/' + id + '/events', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -65,7 +64,6 @@ export async function createEvent(Evento: Events) {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado.data);
   } catch (e) {
     console.log(e);
     return null;

@@ -19,11 +19,13 @@ export default function EventoX(){
 
     const  {id}  = useLocalSearchParams();
     const item = collectEventDataById(id as string)
+   // console.log(item.id)
 
 
   useEffect(()=> {
   
   collectData(), collectUserEvent()
+
   
   },
   [Renderize])
@@ -32,10 +34,10 @@ export default function EventoX(){
     return(
         <View style={styles.mainContainer}>
             <View style={styles.myevents}> 
-              <Image style={styles.imageContainer} source={item.imagePath}></Image>
+              <Image style={styles.imageContainer}></Image>
             
                <View style={styles.titleContainer}>
-                  <Text style={styles.titleEventName}> {item.name} </Text>  
+                  <Text style={styles.titleEventName}> </Text>  
 
                   <View style={styles.infoCardsContainer}>
                 

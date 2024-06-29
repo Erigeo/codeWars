@@ -28,7 +28,6 @@ export const UserProvider = ({children} : any) => {
         try{
             const idUser = await AsyncStorage.getItem('userId')
             const resultado = await getUserData(idUser)
-            console.log(resultado)
             if(resultado){
                 setDataUser(resultado)
              }
