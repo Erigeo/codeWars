@@ -9,7 +9,7 @@ export async function signUpPlayer(user: Player){
   if(!user) return null;
   console.log(user.password)
   try {
-    const resultado = await Api.post('users/register/player', user)
+    const resultado = await Api.post('api/users/register/player', user)
     console.log('aquii')
     return resultado.data
   }
