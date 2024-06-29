@@ -1,89 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import "core-js/stable/atob";
-import {Snackbar} from 'react-native-paper'
-import { Pressable, Text, TextInput, View } from 'react-native';
-import styles from './LoginStyles'; // Importando os estilos
-import { signIn } from '../../services/Auth';
+import React, { useState } from 'react';
+import { Text, TextInput, View, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { jwtDecode } from 'jwt-decode';
-import { Link, router } from 'expo-router';
-import { getUserData } from '../../services/UserService';
-import { User } from '../../interfaces/User';
+import { Snackbar } from 'react-native-paper';
+import { signIn } from '../../services/Auth';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { Link } from 'expo-router';
+import "core-js/stable/atob";
+import { getUserData } from '../../services/PlayerService';
+import { Player } from '../../interfaces/User';
+import styles from './LoginStyles'; // Importando os estilos
+
+export default function Login({ onSuccess }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [dados, setDados] = useState({} as Player);
+
+  const onDismissSnackBar = () => setVisible(false);
 
 
-export default function Login() {
-const [email, setEmail] = useState('')
-const [password, setPassword] = useState('')
-const [visible, setVisible] = useState(false);
-const onDismissSnackBar = () => setVisible(false);
-const [dados, setDados] = useState({} as User)
-
-
-
-  
-async function login(){
-  try{
-  const resultado = await signIn(email, password)
-  const token = JSON.stringify(resultado)
-    
-  if(token){
-    
-    //const { token } = resultado
-   console.log("uii")
-    AsyncStorage.setItem('token', token)
-    const decodeToken = jwtDecode(token) as any
-    const userId = decodeToken.sub
-    console.log(decodeToken)
-    console.log("kkk")
-    AsyncStorage.setItem('userId', userId)    
-
-    //const userData = await getUserData(userId)
-    //if(userData){
-      //setDados(userData)
-    //}
-
-   
-      router.replace('Home')
-    
-    
-    
-    
-   
-
-  }
-   
-  }catch (e){
-    console.log(e)
-    setVisible(true)
-  }
+interface CustomJwtPayload extends JwtPayload {
+  id: string; // Adicione outras propriedades conforme necessário
 }
+
+  async function handleLogin() {
+    try {
+      const resultado = await signIn(email, password);
+      const token = resultado // Acesse o token diretamente da resposta
+      console.log(token);
+  
+      if (token) {
+        await AsyncStorage.setItem('token', token); // Armazene o token sem JSON.stringify
+  
+        const decodeToken = jwtDecode<CustomJwtPayload>(token);
+        console.log(decodeToken);
+        const userId = decodeToken.id;
+        await AsyncStorage.setItem('userId', userId);
+  
+        onSuccess();
+      }
+    } catch (e) {
+      console.log(e);
+      setVisible(true);
+    }
+  }
 
 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput style={styles.input} placeholder="Email" value={email} autoCapitalize='none' onChangeText={setEmail} keyboardType="email-address" />
-     
-      <TextInput style={styles.input} placeholder="Senha" value={password} autoCapitalize='none' onChangeText={setPassword}  />
-     
-      <Pressable style={styles.button} onPress={login}>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        autoCapitalize="none"
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        value={password}
+        autoCapitalize="none"
+        onChangeText={setPassword}
+        secureTextEntry={true}
+      />
+      <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </Pressable>
-      
       <Link replace href={"Register"} asChild>
-      <Pressable>
-        <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
-      </Pressable>
+        <Pressable>
+          <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
+        </Pressable>
       </Link>
-
       <Snackbar
         visible={visible}
         onDismiss={onDismissSnackBar}
         action={{
-          label: 'Undo',
-          onPress: () => setVisible(false)
-        }}>
+          label: 'Fechar',
+          onPress: onDismissSnackBar,
+        }}
+      >
         Falha ao efetuar login.
       </Snackbar>
     </View>

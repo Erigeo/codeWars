@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import styles from './HomeStyles'; // Adjust the path as necessary
+import styles from './indexStyle'; // Adjust the path as necessary
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link, router } from 'expo-router';
-
+import Login from './Login';
 
 export default function Page() {
   const [carregandoPage, setCarregandoPage] = useState(true);
+
+  function handleLoginSuccess() {
+     router.replace('Home')
+    console.log('Login bem-sucedido! Navegar para Home...');
+  }
   
 
   useEffect(() => {
@@ -41,13 +46,9 @@ export default function Page() {
         <Text style={styles.title2}>WARS</Text>
       </View>
 
-      <View>
-        <Link href={"Login"} asChild>
-        <Pressable  style= {styles.buttonArea}>
-          <Text>Login</Text>
-        </Pressable>
-        </Link>
-      </View>
+      
+         <Login onSuccess={handleLoginSuccess}/>
+  
     </View>
   );
 }

@@ -2,11 +2,9 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#364753',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    width: '80%'
   },
   title: {
     fontSize: 30,
@@ -18,19 +16,19 @@ export default StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
+    marginBottom: 15,
+    borderRadius: 20,
   },
   button: {
-    backgroundColor: '#1e90ff',
+    backgroundColor: '#fff',
     padding: 15,
     width: '100%',
     alignItems: 'center',
-    borderRadius: 5,
+    borderRadius: 20,
     marginBottom: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: '#364753',
     fontSize: 18,
     fontWeight: 'bold',
   },

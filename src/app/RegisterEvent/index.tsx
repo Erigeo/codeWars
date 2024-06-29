@@ -2,7 +2,7 @@ import { View, Text, Pressable, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { Link } from 'expo-router'
 import { v4 as uuidv4 } from 'uuid';
-import { createEtapa, createEvent } from '../../services/UserService';
+import { createEvent } from '../../services/ManagerService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './RegisterEventStyles';
 import 'react-native-get-random-values';
@@ -39,27 +39,16 @@ function atualizarDados(id: string, valor: string){
   async function cadastrarEvento(){
     try{
       const resultado = await createEvent({
-        id: uuidv4(),
-        userId:  await AsyncStorage.getItem('userId'),
-        eventoNome: dados.eventoNome,
-        numParticipantes: dados.numParticipantes,
-        participantes: [],
-        imagem: 'https://transform.nws.ai/https%3A%2F%2Fcdn.thenewsroom.io%2Fplatform%2Fstory_media%2F1288806935%2F720x511-Magic-WorldChampionship-XXVIII-Logo.png/w_1200,c_limit/', 
-        dataInicio: dados.dataInicio,
-        etapas: [],
-        descricao: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt posuere nisi, eget tempor massa mollis vel. Nulla nec augue vulputate, tempus eros vitae, aliquet quam. Mauris ut luctus ligula. Nunc ac tempor lorem. Maecenas ut augue fringilla, ornare velit at, dapibus ante. Suspendisse potenti. Ut lacinia ex odio. Morbi sit amet eros augue. Nulla accumsan libero feugiat eleifend cursus.',
-        local: dados.local,
-        tags: selected,
-        numEtapas: dados.numEtapas
-        
+
+        managerId: await AsyncStorage.getItem('userId') ,
+        name: dados.eventoNome ,
+        location: dados.local,
+        numberOfParticipants: dados.numEtapas,
+        tags: selected, 
+        numberOfRounds: dados.numParticipantes,
+       
       })
       handleClick()
-      for(let i=1; i < parseInt(dados.numEtapas)+1; i++){
-      const resultado1 = await createEtapa({
-        id: uuidv4(),
-        eventoId: resultado,
-        nome: `Dia ${i}`
-      })}
       
       }catch(e){
         console.log(e)

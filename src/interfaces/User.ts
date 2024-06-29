@@ -1,50 +1,87 @@
-export interface User {
-    email: string;
+export interface Player {
+    email: string; 
     password: string;
-    telefone?: string;
-    imagem?: string;
-    nome?: string;
+    phone?: string; //
+    image?: string; //
+    name: string; 
+    username: string;
     nickname?: string;
-    endereço?: Endereço;
-    tipoDeUser?: String;
-    eventos?: Evento[];
+    role?: string;
+    address?: Endereço; // 
+    winrate?: number; 
+    deckId?: string;
+    eventPoints?: number;
+    appliedEventsId?: string[];
+    opponentIds?: string[];
+    historicoEventos?: Event[];
+    opponentsMatchWinrate?: number;
+}
+
+export interface Manager {
+    email: string; 
+    password: string;
+    role?: string;
+    phone?: string; //
+    image?: string; //
+    name: string; 
+    username: string;
+    nickname?: string;
+    address?: Endereço; //
+    events?: Events[];
 }
 
 export interface Endereço {
-    cidade: String;
-    estado: String;
+    cidade: string;
+    estado: string;
 }
 
-export interface Evento {
-    id: string;
-    userId: string;
-    eventoNome: string;
-    numParticipantes?: number;
-    participantes?: User[],
-    imagem?: string;
-    dataInicio: Date;
-    etapas?: Etapas[],
-    descricao?: string;
-    local: string;
-    regras?: string;
-    tags?: any[];
-    numEtapas?: number;
+export interface Events {
+    id?: string;
+    managerId: string;
+    name: string;
+    location: string;
+    numberOfParticipants?: number;
+    playerIds?: string[],
+    imagePath?: string;
+    date?: Date;
+    description?: string; //
+    rules?: string; //
+    tags?: string[]; //
+    numberOfRounds: number;
+    currentRound?: number;
+    hasStarted?: boolean;
+    finished?: boolean;
+    pairings?: Pairing[];
 }
 
-export interface Etapas {
-    id: string;
-    eventoId: string;
-    nome: string;
-    mesas?: Mesas[]
+
+
+export interface Pairing {
+    playerOneId: string;
+    playerTwoId: string;
+    result?: number;
 }
 
-export interface Mesas {
+export interface EventResult {
     id: string;
-    etapasId: string;
-    player1Id: string;
-    player2Id: string;
-    winnerId: string;
-    loserId: string;
-    duration: string;
-    status: string;
+    eventId: string;
+    playersResult: PlayerResult[];
 }
+
+export interface PlayerResult{
+    playerId: string;
+    eventPoints: number;
+    winrate: number;
+    opponentsIds: string[];
+    deckId: string;
+}
+
+export interface Deck {
+    id: string;
+    deckName: string;
+    deckList: string;
+    positionFrequencies: Map<number, number>;
+}
+
+
+

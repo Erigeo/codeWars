@@ -11,16 +11,16 @@ export default StyleSheet.create({
     width: "60%",
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 150
+    marginBottom: 100
   },
   title1:{
-    fontSize: 46,
+    fontSize: 58,
     color: "#fff",
     marginRight: 50,
     marginBottom: -15
   },
   title2:{
-    fontSize: 46,
+    fontSize: 58  ,
     color: "#fff",
     marginLeft: 50
   },

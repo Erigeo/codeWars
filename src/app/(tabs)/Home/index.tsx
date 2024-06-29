@@ -2,9 +2,9 @@ import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native'
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
 import { Link, router } from 'expo-router'
-import { Evento, User } from '../../../interfaces/User'
+import { Events, Player } from '../../../interfaces/User'
+import { Manager } from '../../../interfaces/User';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { getEventData, getUserData } from '../../../services/UserService'
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { useUserData } from '../../../contexts/AuthContext';
@@ -12,11 +12,11 @@ import { useUserEventData } from '../../../contexts/EventContext';
 
 export default function Home() {
   const { dataUser, collectData, Renderize } = useUserData();
-  const {eventList, collectUserEvent} = useUserEventData();
 
   useEffect(()=> {
   
-  collectData(), collectUserEvent()
+  collectData()
+  
   
   },
   [Renderize])
@@ -36,12 +36,11 @@ export default function Home() {
            <Text style={styles.titleMyEvents}>Meus Eventos</Text>
       </View>
       
-      {/* <Text> {JSON.stringify(eventList[0].id)} </Text>  */} 
       <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
 
      
-        {dataUser.tipoDeUser == "Manager" && eventList.length==null ? (
-          <View style={styles.myevents}>
+        {dataUser.role == "ROLE_MANAGER" && dataUser.events.length==0 ? (
+          <View style={styles.myevents1}>
             <Text style={styles.myEventsDescription}>Voce ainda não criou nenhum evento!</Text>
             <Link href={"RegisterEvent"} asChild>
               <Pressable style={styles.buttonSearchEvents}>
@@ -53,17 +52,17 @@ export default function Home() {
 ): null
 }
 
-          {dataUser.tipoDeUser == "Manager" && eventList.length>=1 ? (
+          {dataUser.role == "ROLE_MANAGER" && dataUser.events.length>=1 ? (
           <View style={styles.myeventsContainer}>
             <FlatList
-            data={eventList}
+            data={dataUser.events}
             style={{ maxHeight: '80%'}}
             renderItem={({item}) => { return (
             <View style={styles.myevents}> 
-              <Image style={styles.imageContainer} source={item.imagem}></Image>
+              <Image style={styles.imageContainer} source={item.imagePath}></Image>
             
                <View style={styles.titleContainer}>
-                  <Text style={styles.titleEventName}> {item.eventoNome} </Text>  
+                  <Text style={styles.titleEventName}> {item.name} </Text>  
 
                   <View style={styles.infoCardsContainer}>
                 
@@ -102,7 +101,7 @@ export default function Home() {
 </View>
 
 
-{dataUser.tipoDeUser == "User"  ? (
+{dataUser.role == "ROLE_USER" && dataUser.events.length == 0  ? (
        
         <View style={styles.myevents}>
           <Text style={styles.myEventsDescription}>Voce ainda não está participando de nenhum evento!</Text>
@@ -120,6 +119,15 @@ export default function Home() {
 
 
 const styles = StyleSheet.create({
+  myevents1: {
+    borderRadius: 15,
+    backgroundColor: '#364753',
+    width: '80%',
+    height: 150,
+    marginBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   myeventsContainer: {
     flex: 1,
     width: '95%',
@@ -137,7 +145,6 @@ const styles = StyleSheet.create({
   buttonSearchEvents: {
     backgroundColor: 'green',
     width: '80%',
-    padding: 20,
     margin: 20,
     alignItems: 'center',
     borderRadius: 15

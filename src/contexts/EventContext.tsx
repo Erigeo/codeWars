@@ -1,15 +1,15 @@
 import {useEffect, useState, useContext, createContext} from 'react';
-import { User, Evento } from '../interfaces/User';
+import { Events } from '../interfaces/User';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getEventData, getUserData } from '../services/UserService';
+import { getEventById, getUserData } from '../services/PlayerService';
 
 
 interface UserEventContextType {
-    eventList: Evento[];
-    collectUserEvent: () => Promise<void>;
+    event: Events;
     Renderize: boolean;
+    collectUserEvent: () => Promise<void>;
     handleClick: () => void;
-    collectEventDataById: (id: string) => Evento | undefined;
+    collectEventDataById: (id: string) => Events | undefined;
   }
 
 const UserEventContext =  createContext<UserEventContextType | undefined>(undefined);
@@ -17,28 +17,25 @@ const UserEventContext =  createContext<UserEventContextType | undefined>(undefi
 
 
 export const UserEventProvider = ({children} : any) => {
-    const [eventList, setEventList] = useState([]);
+    const [event, setEvent] = useState<Events>();
     const [Renderize, setRenderize] = useState(false);
 
     const handleClick = () => {
         setRenderize(prevRenderize => !prevRenderize); // Alternando entre true e false
       };
 
-      const collectEventDataById = (id: string): Evento | undefined => {
-        return eventList.find(evento => evento.id === id);
+      const collectEventDataById = (id: string): Events | undefined => {
+        return event;
       };
 
     const collectUserEvent = async() => {
     
         try{
           const idUser = await AsyncStorage.getItem('userId')
-          const resultado = await getEventData()
+          const resultado = await getEventById(idUser);
           if(resultado){
-            const resultadoFiltrado = resultado.filter((Evento: Evento)=> {
-              return Evento.userId == idUser;
-            })
-           
-            setEventList(resultadoFiltrado)
+            
+            setEvent(resultado.data)
     
           }
         }catch(e){
@@ -47,7 +44,7 @@ export const UserEventProvider = ({children} : any) => {
         }
       }
 
-    return <UserEventContext.Provider value={{eventList, collectUserEvent, Renderize, handleClick, collectEventDataById}}>{children}</UserEventContext.Provider>
+    return <UserEventContext.Provider value={{event, collectUserEvent, Renderize, handleClick, collectEventDataById}}>{children}</UserEventContext.Provider>
 
 }
 

@@ -27,7 +27,7 @@ export default function _layout() {
         }} />
          <Stack.Screen name="Register/index" options={{
             title: 'Login Modal',
-            headerShown: false
+            //headerShown: false
             
         }} />
         <Stack.Screen name="(tabs)" options={{

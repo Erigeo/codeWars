@@ -11,7 +11,7 @@ import { Feather } from '@expo/vector-icons';
 
 export default function EventoX(){
     const { dataUser, collectData, Renderize } = useUserData();
-    const {eventList, collectUserEvent, collectEventDataById} = useUserEventData();
+    const {event, collectUserEvent, collectEventDataById} = useUserEventData();
     const [selectedButton, setSelectedButton] = useState(null);
     const handleButtonPress = (buttonIndex) => {
       setSelectedButton(buttonIndex);
@@ -32,10 +32,10 @@ export default function EventoX(){
     return(
         <View style={styles.mainContainer}>
             <View style={styles.myevents}> 
-              <Image style={styles.imageContainer} source={item.imagem}></Image>
+              <Image style={styles.imageContainer} source={item.imagePath}></Image>
             
                <View style={styles.titleContainer}>
-                  <Text style={styles.titleEventName}> {item.eventoNome} </Text>  
+                  <Text style={styles.titleEventName}> {item.name} </Text>  
 
                   <View style={styles.infoCardsContainer}>
                 
@@ -87,17 +87,17 @@ export default function EventoX(){
                   <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                  <Text style={styles.TextDetails}> {item.descricao}</Text>
+                  <Text style={styles.TextDetails}> {item.description}</Text>
                  <View style={styles.textdetailscontainer}> 
                   <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                 <Text style={styles.TextDetails}> {item.descricao}</Text>
+                 <Text style={styles.TextDetails}> {item.description}</Text>
                  <View style={styles.textdetailscontainer}> 
                   <Text style={styles.TextTitleDetalhes}>Premiação</Text>
                   <Feather name="edit" size={20} color="gray" />
                  </View>
-                 <Text style={styles.TextDetails}> {item.descricao}</Text>
+                 <Text style={styles.TextDetails}> {item.description}</Text>
                 
                 
               </View>
@@ -108,6 +108,7 @@ export default function EventoX(){
               <View>
                 <View style={styles.textTitleContainer}> 
                   <Text style={styles.TextTitleTorneio}>Torneio </Text> 
+                  
                 </View>
                
 
