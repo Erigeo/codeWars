@@ -44,7 +44,7 @@ function atualizarDados(id: string, valor: string){
       console.log(resultado)
       if (resultado) {
         console.log("criado")
-        router.replace("index")
+        router.replace('/');
 
       }
       }catch(e){
@@ -71,7 +71,7 @@ function atualizarDados(id: string, valor: string){
         console.log(resultado)
         if (resultado) {
           console.log("criado")
-          router.replace("index")
+          router.replace('/');
   
         }
         }catch(e){
