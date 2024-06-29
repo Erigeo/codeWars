@@ -10,24 +10,23 @@ import { useUserEventData } from "../../contexts/EventContext";
 import { Feather } from '@expo/vector-icons';
 
 export default function EventoX(){
-    const { dataUser, collectData, Renderize } = useUserData();
-    const {event, collectEventDataById} = useUserEventData();
-    const [selectedButton, setSelectedButton] = useState(null);
-    const handleButtonPress = (buttonIndex) => {
-      setSelectedButton(buttonIndex);
-    };
+  const { dataUser, collectData, Renderize } = useUserData();
+  const {event, collectEventDataById} = useUserEventData();
+  const [selectedButton, setSelectedButton] = useState(null);
+  const handleButtonPress = (buttonIndex) => {
+    setSelectedButton(buttonIndex);
+  };
 
-    
-
-
-  useEffect(()=> {
-    const  {id}  = useLocalSearchParams();
-    collectEventDataById(id as string)
-
+    const { id } = useLocalSearchParams();
   
-  },
-  [Renderize])
 
+    useEffect(() => {
+      if (id) {
+        collectEventDataById(id as string);
+        console.log("aaaa");
+      }
+    }, [id]); // executa apenas quando id mudar
+ 
 
     return(
         <View style={styles.mainContainer}>

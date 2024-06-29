@@ -7,20 +7,20 @@ interface UserEventContextType {
   event: Events | undefined;
   Renderize: boolean;
   handleClick: () => void;
-  collectEventDataById: (id: string) => Promise<Events | undefined>;
+  collectEventDataById: (id: string) => Promise<void>;
 }
 
 const UserEventContext = createContext<UserEventContextType | undefined>(undefined);
 
 export const UserEventProvider = ({ children }: { children: ReactNode }) => {
-  const [event, setEvent] = useState<Events | undefined>(undefined);
+  const [event, setEvent] = useState<Events>({} as Events);
   const [Renderize, setRenderize] = useState(false);
 
   const handleClick = () => {
     setRenderize(prevRenderize => !prevRenderize); // Toggle between true and false
   };
 
-  const collectEventDataById = async (eventId: string): Promise<Events | undefined> => {
+  const collectEventDataById = async (eventId: string) => {
     try {
       if (eventId) {
         const resultado = await getEventById(eventId);
