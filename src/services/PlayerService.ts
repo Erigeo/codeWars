@@ -41,12 +41,12 @@ export async function getEventById(id: string) {
   try {
     const token = await AsyncStorage.getItem('token'); // Obtém o token armazenado
 
-    const resultado = await Api.get('api/events/manager/' + id + '/events', {
+    const resultado = await Api.get('api/events/' + id + '/get', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-
+    console.log(resultado.data)
     return resultado.data;
   } catch (e) {
     console.log(e);
