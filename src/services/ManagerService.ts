@@ -7,7 +7,7 @@ import Api from "./Api";
 
 export async function signUpManager(user: Manager){
   if(!user) return null;
-  console.log(user.password)
+  //console.log(user.password)
   try {
     const resultado = await Api.post('api/users/register/manager', user)
     return resultado.data
@@ -61,6 +61,44 @@ export async function createEvent(Evento: Events) {
     return resultado.data
   } catch (e) {
     console.log(e);
+    return null;
+  }
+}
+
+export async function startEvent(id: string) {
+  try {
+    const token = await AsyncStorage.getItem('token'); 
+    if (!token) {
+      console.log('Token not found');
+      return null;
+    }
+
+    console.log(`Token found: ${token}`);
+    console.log(`Starting event with ID: ${id}`);
+
+    const resultado = await Api.post(`api/events/${id}/start`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log('Event started:', resultado.data);
+
+    const pairing = await Api.post(`api/events/${id}/generatePairings`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log('Pairings generated:', pairing.data);
+
+    return true;
+  } catch (e) {
+    if (e.response) {
+      console.log(`Error: ${e.response.status} - ${e.response.data}`);
+    } else {
+      console.log(e);
+    }
     return null;
   }
 }

@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext, createContext, ReactNode } from 'react';
-import { Events } from '../interfaces/User';
+import { Events, Player } from '../interfaces/User';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getEventById, getUserData } from '../services/PlayerService';
 
 interface UserEventContextType {
   event: Events | undefined;
+  eventPlayers: Player[];
   Renderize: boolean;
   handleClick: () => void;
   collectEventDataById: (id: string) => Promise<void>;
+  collectPlayersDataByEventId: (event: Events) => Promise<void>;
 }
 
 const UserEventContext = createContext<UserEventContextType | undefined>(undefined);
@@ -15,6 +17,13 @@ const UserEventContext = createContext<UserEventContextType | undefined>(undefin
 export const UserEventProvider = ({ children }: { children: ReactNode }) => {
   const [event, setEvent] = useState<Events>({} as Events);
   const [Renderize, setRenderize] = useState(false);
+  const [eventPlayers, setEventPlayers] = useState<Player[]>([]);
+
+const addPlayer = (player: Player) => {
+
+setEventPlayers(prevEventPlayers => [...prevEventPlayers, player]);
+
+};
 
   const handleClick = () => {
     setRenderize(prevRenderize => !prevRenderize); // Toggle between true and false
@@ -24,7 +33,7 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
     try {
       if (eventId) {
         const resultado = await getEventById(eventId);
-        console.log(resultado)
+        //console.log(resultado)
         if (resultado) {
           setEvent(resultado);
         }
@@ -36,8 +45,32 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
     return undefined;
   };
 
+  const collectPlayersDataByEventId = async (event: Events) => {
+
+    try {
+    
+    if (event && event.playerIds) {
+    
+    const playersData = await Promise.all(
+    
+    event.playerIds.map(playerId => getUserData(playerId))
+    
+    );
+    
+    setEventPlayers(playersData);
+    
+    }
+    
+    } catch (e) {
+    
+    console.log(e);
+    
+    }
+    
+    };
+
   return (
-    <UserEventContext.Provider value={{ event, Renderize, handleClick, collectEventDataById }}>
+    <UserEventContext.Provider value={{ event, Renderize, handleClick, collectEventDataById, collectPlayersDataByEventId, eventPlayers  }}>
       {children}
     </UserEventContext.Provider>
   );

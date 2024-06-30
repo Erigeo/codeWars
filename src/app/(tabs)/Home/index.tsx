@@ -21,9 +21,10 @@ export default function Home() {
 
   const handlePress = (id: string) => {
     console.log(id)
+    const teste = true
     router.push({
       pathname: '/EventoX',
-      params:{ id },
+      params:{ id},
     });
   };
 

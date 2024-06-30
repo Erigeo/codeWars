@@ -7,10 +7,10 @@ import Api from "./Api";
 
 export async function signUpPlayer(user: Player){
   if(!user) return null;
-  console.log(user.password)
+  //console.log(user.password)
   try {
     const resultado = await Api.post('api/users/register/player', user)
-    console.log('aquii')
+    //console.log('aquii')
     return resultado.data
   }
   catch(error){
@@ -46,7 +46,7 @@ export async function getEventById(id: string) {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado.data)
+   // console.log(resultado.data)
     return resultado.data;
   } catch (e) {
     console.log(e);
