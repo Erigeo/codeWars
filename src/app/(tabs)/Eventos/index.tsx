@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Eventos() {
     const { dataUser, collectData } = useUserData(); 
-    const [playerEvents, setPlayerEvents] = useState([]);
+    const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
 
@@ -18,20 +18,20 @@ export default function Eventos() {
 
     useEffect(() => {
         if (dataUser && dataUser.role === "ROLE_PLAYER") {
-            fetchPlayerEvents();
+            fetchEvents();
         }
     }, [dataUser]); 
 
-    const fetchPlayerEvents = async () => {  
+    const fetchEvents = async () => {  
         try {
-            const token = await AsyncStorage.getItem('token');  // Recuperando o token
-            const idUser = await AsyncStorage.getItem('userId');
-            const response = await Api.get(`api/players/${idUser}/events`, {
+            const token = await AsyncStorage.getItem('token');  
+            console.log(token)
+            const response = await Api.get(`api/events/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setPlayerEvents(response.data);
+            setEvents(response.data);
         } catch (error) {
             console.error('Error fetching player events:', error);
         }
@@ -56,7 +56,7 @@ export default function Eventos() {
     };*/
 
     const filterEvents = () => {
-        let filteredEvents = playerEvents;
+        let filteredEvents = events;
         if (searchQuery) {
             filteredEvents = filteredEvents.filter(event =>
                 event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

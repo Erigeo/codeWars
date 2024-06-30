@@ -3,78 +3,106 @@ import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'expo-router'
 import { useUserData } from "../../contexts/AuthContext";
 import { useLocalSearchParams } from 'expo-router';
 import { useUserEventData } from "../../contexts/EventContext";
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Api from "../../services/Api";
 
 export default function EventoX() {
   const { dataUser, collectData, Renderize } = useUserData();
   const { event, collectEventDataById } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
+  
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex);
   };
+
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const { id } = useLocalSearchParams();
   const [userRole, setUserRole] = useState('');
   const [isUserSubscribed, setIsUserSubscribed] = useState(false); // Estado para verificar se o usuário está inscrito
 
+  async function fetchUserRole() {
+    const role = await AsyncStorage.getItem('userRole');
+    console.log("roleee: " + role)
+    setUserRole(role);
+  }
+
+  async function checkUserSubscription() {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const userIsSubscribed = await checkUserIsSubscribedToEvent(userId);
+      setIsUserSubscribed(userIsSubscribed);
+    } catch (error) {
+      console.error('Erro ao verificar inscrição do usuário:', error);
+      setIsUserSubscribed(false); // Caso de erro, assume que não está inscrito
+    }
+  }
 
   // TODO check uso de async storage - role
   useEffect(() => {
-    async function fetchUserRole() {
-      const role = await AsyncStorage.getItem('userRole');
-      console.log("roleee: " + role)
-      setUserRole(role);
-    }
-
-    async function checkUserSubscription() {
-      const userId = await AsyncStorage.getItem('userId');
-      // Lógica para verificar se o usuário está inscrito no evento (substitua pelo seu método de verificação)
-      const userIsSubscribed = await checkUserIsSubscribedToEvent(userId, event.id);
-      setIsUserSubscribed(userIsSubscribed);
-    }
-
+    setIsLoading(true); // Inicia o modo de carregamento ao carregar os dados do evento
+try {
     if (id) {
       collectEventDataById(id as string);
       console.log("aaaa");
     }
     fetchUserRole();
     checkUserSubscription();
+  }
+  catch (error) {
+    console.error('Erro ao carregar dados do evento:', error);
+  } finally {
+    setIsLoading(false); // Finaliza o modo de carregamento após a conclusão (com sucesso ou erro)
+  }
 
   }, [id]); // executa apenas quando id mudar
 
+  // TODO deixar bonito 
   const handleInscricao = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
       const token = await AsyncStorage.getItem('token'); // Obter token JWT do AsyncStorage
-
-      const response = await fetch(`api/users/${userId}/events/add`, {
-        method: 'PUT',
+      const response = await Api.put(`api/players/${userId}/events/add`, id, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // Incluir token JWT no cabeçalho Authorization
+          'Content-Type': 'text/plain', // Define o tipo de conteúdo como texto simples
+          'Authorization': `Bearer ${token}`, // Incluir token JWT no cabeçalho Authorization
         },
-        body: JSON.stringify({
-          eventId: event.id, // Supondo que event.id é o ID do evento atual
-        }),
       });
-
-      if (response.ok) {
-        // Tratar a resposta conforme necessário
+      if (response.status === 200) {
+        // Atualizar estado para refletir que o usuário está inscrito
+        setIsUserSubscribed(true);
         Alert.alert('Inscrição realizada com sucesso!');
       } else {
-        // Tratar erros de requisição
         Alert.alert('Erro ao se inscrever no evento.');
       }
     } catch (error) {
       console.error('Erro ao se inscrever no evento:', error);
+      console.log(error.response.data);
       Alert.alert('Erro ao se inscrever no evento.');
     }
   };
+
+  // Função para verificar se o usuário está inscrito no evento
+  async function checkUserIsSubscribedToEvent(userId) {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const playerIsInEvent = event.playerIds.includes(userId);
+
+      return playerIsInEvent !== undefined; // Retorna true se o evento estiver na lista, caso contrário false
+    } catch (error) {
+      console.error('Erro ao verificar inscrição do usuário:', error);
+      return false; // Em caso de erro, retorna false
+    }
+  }
+
+  if(isLoading){
+    return null
+  }
   
   return (
     <View style={styles.mainContainer}>
@@ -82,12 +110,11 @@ export default function EventoX() {
         <Image style={styles.imageContainer} source={event.imagePath}></Image>
 
         <View style={styles.titleContainer}>
-          <Text style={styles.titleEventName}> {event.name} </Text>
+          <Text style={styles.titleEventName}>{event.name}</Text>
 
           <View style={styles.infoCardsContainer}>
-
             <View style={styles.cardPlayersNumber}>
-              < Ionicons name="people" size={28} color="#9747FF" />
+              <Ionicons name="people" size={28} color="#9747FF" />
               <Text style={styles.titlePlayersNumber}> 35</Text>
             </View>
             <View style={styles.cardEventDate}>
@@ -97,18 +124,20 @@ export default function EventoX() {
           </View>
 
           <Pressable
-            style={styles.buttonSeeEvent}
+            style={[styles.buttonSeeEvent, isUserSubscribed && styles.disabledButton]}
             onPress={() => {
               if (userRole === 'ROLE_MANAGER') {
                 // Lógica para gerentes
                 console.log('Lógica para gerentes');
-              } else {
-                // Lógica para usuários normais (ROLE_PLAYER)
+              } else if (!isUserSubscribed) {
+                // Lógica para usuários normais (ROLE_PLAYER) apenas se não estiver inscrito
                 handleInscricao();
               }
-            }}>
+            }}
+            disabled={isLoading} // Desabilita o botão enquanto estiver carregando
+            >
             <Text style={styles.buttonMyEventText1}>
-              {userRole === 'ROLE_MANAGER' ? 'Iniciar Evento' : 'Inscrever-se'}
+            {isLoading ? 'Carregando...' : userRole === 'ROLE_MANAGER' ? 'Iniciar Evento' : isUserSubscribed ? 'Inscrito' : 'Inscrever-se'}
             </Text>
           </Pressable>
 
@@ -119,64 +148,50 @@ export default function EventoX() {
       <View style={styles.navbarcontainer} >
 
         <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(1)}>
-          <Text style={[
-            selectedButton === 1 && styles.selectedText
-          ]}>Detalhes</Text>
+          <Text style={[selectedButton === 1 && styles.selectedText]}>Detalhes</Text>
         </Pressable>
         <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(2)}>
-          <Text style={[
-            selectedButton === 2 && styles.selectedText
-          ]}>Torneio</Text>
+          <Text style={[selectedButton === 2 && styles.selectedText]}>Torneio</Text>
         </Pressable>
         <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(3)}>
-          <Text style={[
-            selectedButton === 3 && styles.selectedText
-          ]}>Rodada</Text>
+          <Text style={[selectedButton === 3 && styles.selectedText]}>Rodada</Text>
         </Pressable>
         <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(4)}>
-          <Text style={[
-            selectedButton === 4 && styles.selectedText
-          ]}>Grade</Text>
+          <Text style={[selectedButton === 4 && styles.selectedText]}>Grade</Text>
         </Pressable>
       </View>
 
       {selectedButton == 1 ? (
         <View>
           <View style={styles.textdetailscontainer}>
-          <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
+            <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
             {userRole === 'ROLE_MANAGER' && (
               <Feather name="edit" size={20} color="gray" />
             )}
           </View>
           <Text style={styles.TextDetails}> {event.description}</Text>
           <View style={styles.textdetailscontainer}>
-          <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
+            <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
             {userRole === 'ROLE_MANAGER' && (
               <Feather name="edit" size={20} color="gray" />
             )}
           </View>
           <Text style={styles.TextDetails}> {event.description}</Text>
           <View style={styles.textdetailscontainer}>
-          <Text style={styles.TextTitleDetalhes}>Premiação</Text>
+            <Text style={styles.TextTitleDetalhes}>Premiação</Text>
             {userRole === 'ROLE_MANAGER' && (
               <Feather name="edit" size={20} color="gray" />
             )}
           </View>
           <Text style={styles.TextDetails}> {event.description}</Text>
-
-
         </View>
-
       ) : null}
 
       {selectedButton == 2 ? (
         <View>
           <View style={styles.textTitleContainer}>
             <Text style={styles.TextTitleTorneio}>Torneio </Text>
-
           </View>
-
-
         </View>
       ) : null}
 
@@ -191,9 +206,8 @@ export default function EventoX() {
           <Text style={styles.TextTitleDetalhes}>Grade</Text>
         </View>
       ) : null}
-
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -348,6 +362,10 @@ const styles = StyleSheet.create({
   buttonMyEventText1: {
     color: '#FFFFFF',
     fontSize: 20
+  },
+
+  disabledButton: {
+    opacity: 0.6,
   },
 
 })
