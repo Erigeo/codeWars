@@ -86,4 +86,23 @@ export async function verifyEventsByID(userId: String ){
 
 }
 
+export async function checkUserIsSubscribedToEvent(userId: string, event: any) {
+  try {
+    const playerIsInEvent = event.playerIds.includes(userId);
+    return playerIsInEvent !== undefined;
+  } catch (error) {
+    console.error('Erro ao verificar inscrição do usuário:', error);
+    return false;
+  }
+}
+
+export async function subscribeUserToEvent(userId: string, eventId: string, token: string) {
+  return await Api.put(`api/players/${userId}/events/add`, eventId, {
+    headers: {
+      'Content-Type': 'text/plain',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+}
+
 
