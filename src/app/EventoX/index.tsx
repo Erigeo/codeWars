@@ -18,17 +18,76 @@ import { useEventData } from '../../hooks/useEventData';
 export default function EventoX() {
   const { dataUser, collectData, Renderize } = useUserData();
   const { event, collectEventDataById } = useUserEventData();
-  const { id } = useLocalSearchParams();
-  const [selectedButton, setSelectedButton] = useState<number | null>(null);
+  const [selectedButton, setSelectedButton] = useState(null);
 
-  const { isLoading, userRole, isUserSubscribed, handleInscricao } = useEventData(event, id);
-
-  const handleButtonPress = (buttonIndex: number) => {
+  const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex);
   };
 
+  //const [isLoading, setIsLoading] = useState(true);
+
+
+  const { id } = useLocalSearchParams();
+ // const [userRole, setUserRole] = useState('');
+ // const [isUserSubscribed, setIsUserSubscribed] = useState(false); // Estado para verificar se o usuário está inscrito
+
+  const { isLoading, userRole, isUserSubscribed, handleInscricao } = useEventData(event);
+
+
+  /*async function fetchUserRole() {
+    const role = await AsyncStorage.getItem('userRole');
+    console.log("roleee: " + role)
+    setUserRole(role);
+  }*/
+
+  /*async function checkUserSubscription() {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const userIsSubscribed = await checkUserIsSubscribedToEvent(userId);
+      setIsUserSubscribed(userIsSubscribed);
+    } catch (error) {
+      console.error('Erro ao verificar inscrição do usuário:', error);
+      setIsUserSubscribed(false); // Caso de erro, assume que não está inscrito
+    }
+  }*/
+
+  // TODO check uso de async storage - role
+  useEffect(() => {
+    console.log("evento" + event.id)
+    //setIsLoading(true); // Inicia o modo de carregamento ao carregar os dados do evento
+    try {
+      if (id) {
+        collectEventDataById(id as string);
+      }
+      //fetchUserRole();
+      //checkUserSubscription();
+      //useEventData(event, id);
+    }
+    catch (error) {
+      console.error('Erro ao carregar dados do evento:', error);
+    } finally {
+      //setIsLoading(false); // Finaliza o modo de carregamento após a conclusão (com sucesso ou erro)
+    }
+
+  }, [id]); // executa apenas quando id mudar
+
+  // TODO deixar bonito 
+
+  // Função para verificar se o usuário está inscrito no evento
+ /* async function checkUserIsSubscribedToEvent(userId) {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const playerIsInEvent = event.playerIds.includes(userId);
+
+      return playerIsInEvent !== undefined; // Retorna true se o evento estiver na lista, caso contrário false
+    } catch (error) {
+      console.error('Erro ao verificar inscrição do usuário:', error);
+      return false; // Em caso de erro, retorna false
+    }
+  }*/
+
   if (isLoading) {
-    return null; 
+    return null
   }
 
   return (

@@ -6,24 +6,25 @@ import { checkUserIsSubscribedToEvent, getEventById, subscribeUserToEvent } from
 
 import { Alert } from 'react-native';
 
-export function useEventData(event, id) {
+export function useEventData(event) {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
   const [isUserSubscribed, setIsUserSubscribed] = useState(false);
+  const id = event.id;
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-
+        console.log(event)
         if (id) {
-          await getEventById(id as string);
 
           const role = await fetchUserRole();
           setUserRole(role);
-
           const userId = await getUserId();
+
           const subscribed = await checkUserIsSubscribedToEvent(userId, event);
+          console.log("subscibred? " + subscribed) 
           setIsUserSubscribed(subscribed);
         }
       } catch (error) {
@@ -34,7 +35,7 @@ export function useEventData(event, id) {
     };
 
     loadData();
-  }, [id]);
+  }, [event.id]);
 
 
   const handleInscricao = async () => {
