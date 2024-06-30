@@ -58,10 +58,12 @@ export default function Eventos() {
     const filterEvents = () => {
         let filteredEvents = events;
         if (searchQuery) {
-            filteredEvents = filteredEvents.filter(event =>
-                event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                event.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-            );
+            filteredEvents = filteredEvents.filter(event => {
+                const name = event.name?.toLowerCase() ?? '';
+                const tags = event.tags?.map(tag => tag.toLowerCase()) ?? [];
+                return name.includes(searchQuery.toLowerCase()) || 
+                       tags.some(tag => tag.includes(searchQuery.toLowerCase()));
+            });
         }
     // TODO remove or implement
        /* if (selectedTags.length > 0) {

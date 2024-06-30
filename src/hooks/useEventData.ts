@@ -7,7 +7,6 @@ import { checkUserIsSubscribedToEvent, getEventById, subscribeUserToEvent } from
 import { Alert } from 'react-native';
 
 export function useEventData(event) {
-  const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
   const [isUserSubscribed, setIsUserSubscribed] = useState(false);
   const id = event.id;
@@ -15,7 +14,6 @@ export function useEventData(event) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoading(true);
         console.log(event)
         if (id) {
 
@@ -30,7 +28,6 @@ export function useEventData(event) {
       } catch (error) {
         console.error('Erro ao carregar dados do evento:', error);
       } finally {
-        setIsLoading(false);
       }
     };
 
@@ -56,5 +53,5 @@ export function useEventData(event) {
     }
   };
 
-  return { isLoading, userRole, isUserSubscribed, handleInscricao };
+  return { userRole, isUserSubscribed, handleInscricao };
 }

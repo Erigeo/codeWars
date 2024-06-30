@@ -22,28 +22,27 @@ export default function EventoX() {
   };
 
   const { id } = useLocalSearchParams();
-  const { isLoading, userRole, isUserSubscribed, handleInscricao } = useEventData(event);
-
+  const { userRole, isUserSubscribed, handleInscricao } = useEventData(event);
+  const [isLoading, setIsLoading] = useState(true);
 
   // TODO check modularização
   useEffect(() => {
     console.log("evento" + event.id)
-    try {
-      if (id) {
-        collectEventDataById(id as string);
-      }
-    }
-    catch (error) {
-      console.error('Erro ao carregar dados do evento:', error);
-    } finally {
-      //setIsLoading(false); // TODO aqui ou em useEventData?
+    if (id) {
+      collectEventDataById(id as string)
+        .then(() => setIsLoading(false)) // Evento carregado
+        .catch((error) => {
+          console.error('Erro ao carregar dados do evento:', error);
+          setIsLoading(false);
+        });
     }
 
   }, [id]); // executa apenas quando id mudar
 
   // TODO aqui mesmo?
   if (isLoading) {
-    return null
+    return <View style={styles.mainContainer}>
+      </View>;
   }
 
   return (
