@@ -167,7 +167,7 @@ export default StyleSheet.create({
         },
         flatList: {
           
-          width: '80%',
+          width: '90%',
           backgroundColor: '#2D3841',
           paddingHorizontal: 10,
           paddingTop: 10,
@@ -215,7 +215,9 @@ export default StyleSheet.create({
           fontSize: 20
         },
         nameTitle: {
-          color: '#fff'
+          color: '#fff',
+          fontSize: 16,
+          maxWidth: 50,
         },
         imageParticipantCard: {
           borderRadius: 100,
@@ -224,6 +226,28 @@ export default StyleSheet.create({
           backgroundColor: 'white',
           
         },
+        imagePressed: {
+          borderWidth: 2,
+          borderColor: 'green',
+        },
+        titlePressed: {
+          color: 'green'
+        },
+        buttonFinishRound: {
+          width: 150,
+          height: 30,
+          backgroundColor: 'blue',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 15
+        },
+        positionButtonFinishRound: {
+          alignItems: 'center',
+          marginTop: 15
+        },
+        titleButtonFinishRound:{
+          color: '#fff'
+        }
   
   })
   

@@ -72,6 +72,7 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
   const fetchPlayerDetails = async (availablePairings: Pairing[]) => {
     const details = await Promise.all(
       availablePairings.map(async (pairing) => {
+       // if(pairing.playerOneId !== 'Bye' || pairing.playerTwoId !== 'Bye')
         const playerOne = await getUserData(pairing.playerOneId);
         const playerTwo = await getUserData(pairing.playerTwoId);
         return {

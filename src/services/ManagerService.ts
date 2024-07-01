@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Manager, Events } from "../interfaces/User";
+import { Manager, Events, Pairing } from "../interfaces/User";
 import Api from "./Api";
 
 
@@ -64,6 +64,63 @@ export async function createEvent(Evento: Events) {
     return null;
   }
 }
+
+
+export async function savePairings(pairings: Pairing[], eventId: string): Promise<boolean | null> {
+  if (!pairings) return null;
+
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.log('Token não encontrado');
+      return null;
+    }
+
+    const resultado = await Api.post(`api/events/${eventId}/savePairings`, pairings, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+
+    });
+    const resultado1 = await Api.post(`api/events/${eventId}/finalizeRound`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    if(resultado && resultado1){
+      return true;
+    }
+  } catch (e) {
+    console.error('Erro ao salvar os emparelhamentos:', e);
+    return null;
+  }
+}
+
+export async function finalizeRound(eventId: string) {
+  if (!eventId) return null;
+
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.log('Token não encontrado');
+      return null;
+    }
+
+    const resultado = await Api.post(`api/events/${eventId}/finalizeRound`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return true;
+  } catch (e) {
+    console.error('Erro ao finalizar o round:', e);
+    return null;
+  }
+}
+
+
+
+
 
 export async function startEvent(id: string) {
   try {
