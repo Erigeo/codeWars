@@ -1,7 +1,7 @@
-import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native'
+import { View, Text, Pressable, FlatList, ScrollView } from 'react-native'
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
-import { Link, router } from 'expo-router'
+import { Link, router, useLocalSearchParams } from 'expo-router'
 import { Events, Player } from '../../../interfaces/User'
 import { Manager } from '../../../interfaces/User';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -9,242 +9,172 @@ import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { useUserData } from '../../../contexts/AuthContext';
 import { useUserEventData } from '../../../contexts/EventContext';
+import { LinearGradient } from 'expo-linear-gradient';
+import Api from '../../../services/Api';
+import { getUserId } from '../../../services/StorageService';
+import { getEventsByPlayerId } from '../../../services/PlayerService';
+import { styles } from './HomeStyles';
+
 
 export default function Home() {
-  const { dataUser, collectData, Renderize, dataManager} = useUserData();
+  const { dataUser, collectData, Renderize, dataManager, handleClick } = useUserData();
+  const [events, setEvents] = useState([]);
+  const [playerEvents, setPlayerEvents] = useState([]);
+  const [playerId, setPlayerId] = useState('');
 
-  useEffect(()=> {
-  
-  collectData()
-  },
-  [Renderize])
+
+  //TODO dataUser nao tem player id?
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        collectData();
+        const playerIdFromStorage = await AsyncStorage.getItem('userId');
+        setPlayerId(playerIdFromStorage);
+
+        if (dataUser && dataUser.role === "ROLE_PLAYER" && playerIdFromStorage) {
+          console.log("Player ID obtido:", playerIdFromStorage);
+          const events = await getEventsByPlayerId(playerIdFromStorage); // Chama a função para obter os eventos
+          setPlayerEvents(events); // Atualiza o estado playerEvents com os eventos obtidos
+        }
+
+        fetchEvents();
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+
+    fetchData(); // Chama a função assíncrona imediatamente
+  }, [Renderize]);
+
+  // TODO stop doing this
+  const fetchEvents = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      console.log(token)
+      const response = await Api.get(`api/events/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setEvents(response.data);
+    } catch (error) {
+      console.error('Error fetching player events:', error);
+    }
+  };
+
+
 
   const handlePress = (id: string) => {
     console.log(id)
     router.push({
       pathname: '/EventoX',
-      params:{ id },
+      params: { id },
     });
   };
 
 
 
   return (
-    <View style={{flex:1, backgroundColor: '#2D3841'}}>
-      <View style={{ maxWidth: '40%', marginLeft: 5}}>
-           <Text style={styles.titleMyEvents}>Meus Eventos</Text>
+    <View style={{ flex: 1, backgroundColor: '#2D3841' }}>
+      <View style={{ maxWidth: '100%' }}>
+        <Text style={styles.titleMyEvents}>Meus Eventos</Text>
       </View>
-      
-      <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
 
-     
-        { dataManager && dataManager.role == "ROLE_MANAGER"  && dataManager.events.length==0 ? (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        {dataManager && dataManager.role === "ROLE_MANAGER" && dataManager.events.length === 0 ? (
           <View style={styles.myevents1}>
-            <Text style={styles.myEventsDescription}>Voce ainda não criou nenhum evento!</Text>
+            <Text style={styles.myEventsDescription}>Você ainda não criou nenhum evento!</Text>
             <Link href={"RegisterEvent"} asChild>
               <Pressable style={styles.buttonSearchEvents}>
-                <Text style={styles.buttonMyEventText}>criar evento</Text>
+                <Text style={styles.buttonMyEventText}>Criar evento</Text>
               </Pressable>
             </Link>
-        </View>
-        
-): null
-}
+          </View>
+        ) : null}
 
-          { dataManager && dataManager.role == "ROLE_MANAGER"  && dataManager.events.length>=1 ? (
+        {dataManager && dataManager.role === "ROLE_MANAGER" && dataManager.events.length >= 1 ? (
           <View style={styles.myeventsContainer}>
             <FlatList
-            data={dataManager.events}
-            style={{ maxHeight: '80%'}}
-            renderItem={({item}) => { return (
-            <View style={styles.myevents}> 
-              <Image style={styles.imageContainer} source={item.imagePath}></Image>
-            
-               <View style={styles.titleContainer}>
-                  <Text style={styles.titleEventName}> {item.name} </Text>  
-
-                  <View style={styles.infoCardsContainer}>
-                
-                    <View style={styles.cardPlayersNumber}>
-                      < Ionicons name="people" size={28} color="#9747FF" />
-                      <Text style={styles.titlePlayersNumber}> 35</Text>
+              data={dataManager.events}
+              style={{ maxHeight: '80%' }}
+              renderItem={({ item }) => (
+                <View style={styles.myevents}>
+                  <Image style={styles.imageContainer} source={item.imagePath}></Image>
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.titleEventName}>{item.name}</Text>
+                    <View style={styles.infoCardsContainer}>
+                      <View style={styles.cardPlayersNumber}>
+                        <Ionicons name="people" size={28} color="#9747FF" />
+                        <Text style={styles.titlePlayersNumber}>35</Text>
+                      </View>
+                      <View style={styles.cardEventDate}>
+                        <Fontisto name="date" size={24} color="#4ECB71" />
+                        <Text style={styles.titleEventDate}>02/05/24</Text>
+                      </View>
                     </View>
-                    <View style={styles.cardEventDate}>
-                      <Fontisto name="date" size={24} color="#4ECB71" />
-                      <Text style={styles.titleEventDate}> 02/05/24</Text>
-                    </View>
+                    <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id)}>
+                      <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
+                    </Pressable>
                   </View>
-                
-                  <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id)} >
-                    <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
-                  </Pressable>
-                
-              </View>
-              
-            </View>
-          )}}
-            keyExtractor={item => item.id}
-            showsHorizontalScrollIndicator={false}
-        />
-        <View style={styles.buttonCreateContainer}> 
+                </View>
+              )}
+              keyExtractor={item => item.id}
+              showsHorizontalScrollIndicator={false}
+            />
+            <View style={styles.buttonCreateContainer}>
               <Link href={"RegisterEvent"} asChild>
                 <Pressable style={styles.buttonCreateEvents}>
-                  <Text style={styles.buttonMyEventText}>criar evento</Text>
+                  <Text style={styles.buttonMyEventText}>Criar evento</Text>
                 </Pressable>
               </Link>
+            </View>
           </View>
-      </View>
-          
-  ): null
-}
-</View>
+        ) : null}
+
+        {dataUser && dataUser.role === "ROLE_PLAYER" && dataUser.appliedEventsId.length === 0 ? (
+          <View style={styles.noEventsContainer}>
+            <Text style={styles.noEventsText}>Você ainda não está participando de nenhum evento. :(</Text>
+            <Pressable style={styles.buttonContainer}>
+              <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.findEventsButton}>
+                <Text style={styles.findEventsButtonText}>Encontrar eventos</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {dataUser && dataUser.role === "ROLE_PLAYER" && dataUser.appliedEventsId.length >= 1 ? (
+          <View style={{ width: '100%', paddingHorizontal: 20 }}>
+            <Text style={styles.titleUpcomingEvents}>Eventos</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {dataUser && playerEvents.map(event => (
+                <View key={event.id} style={styles.playerEventCard}>
+                  <Image style={styles.playerEventImage} source={event.imagePath} />
+                  <Text style={styles.playerEventName}>{event.name}</Text>
+                  <Text style={styles.playerEventDate}>{event.date}</Text>
+                </View>
+              ))} 
+            </ScrollView>
+          </View>
+        ) : null}
 
 
-{  dataUser && dataUser.role == "ROLE_PLAYER"  && dataUser.appliedEventsId.length == 0 ? (
-       
-        <View style={styles.myevents}>
-          <Text style={styles.myEventsDescription}>Voce ainda não está participando de nenhum evento!</Text>
-         <Pressable style={styles.buttonSearchEvents}>
-            <Text style={styles.buttonMyEventText}>Encontrar Eventos</Text>
-         </Pressable>
-      
+        <View style={{ paddingHorizontal: 10 }}>
+          <Text style={styles.titleUpcomingEvents}>Próximos Eventos</Text>
+          <ScrollView style={{ maxHeight: 400 }}>
+            {dataUser && events.map(event => (
+              <View key={event.id} style={styles.upcomingEventCard}>
+                <Image style={styles.upcomingEventImage} source={event.imagePath} />
+                <Text style={styles.upcomingEventName}>{event.name}</Text>
+                <Text style={styles.upcomingEventDate}>{event.date}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
-): null
+
+
+      </View>
+    </View>
+  );
 }
-</View>
-  )
-  
-}
 
 
-const styles = StyleSheet.create({
-  myevents1: {
-    borderRadius: 15,
-    backgroundColor: '#364753',
-    width: '80%',
-    height: 150,
-    marginBottom: 10,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  myeventsContainer: {
-    flex: 1,
-    width: '95%',
-    marginTop: 10,
-  },
-  myevents: {
-    flexDirection: 'row',
-    borderRadius: 15,
-    backgroundColor: '#364753',
-    width: 400,
-    height: 150,
-    marginBottom: 10,
-    
-  },
-  buttonSearchEvents: {
-    backgroundColor: 'green',
-    width: '80%',
-    margin: 20,
-    alignItems: 'center',
-    borderRadius: 15
-  },
-  titleMyEvents: {
-    marginTop: 20,
-    color: '#FFFFFF',
-    fontSize: 24,
-    
-  },
-  myEventsDescription: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginBottom: 10
-  },
-  buttonMyEventText: {
-    color: '#FFFFFF',
-    fontSize: 20
-  },
-  imageContainer: {
-   padding: 70,
-  },
-  titleContainer: {
-    flex: 1,
-    marginRight: 20,
-    marginLeft: 10,
-    marginTop: 10,
-    alignItems: 'center'
-  },
-  titleEventName: {
-    color: '#FFFFFF',
-    fontSize: 20,
-  },
-  infoCardsContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: -25
-  },
-  cardPlayersNumber: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
-    width: 5,
-    height: 30,
-    gap: 5
-  },
-  titlePlayersNumber: {
-    color: '#9747FF',
-    fontWeight: 'bold'
-  },
-  cardEventDate: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: 5,
-    height: 30,
-    gap: 5
-  },
-  titleEventDate: {
-    color: '#4ECB71',
-    fontWeight: 'bold'
-  },
-  buttonSeeEvent: {
-    flex: 1,
-    backgroundColor: '#364753',
-    width: '80%',
-    flexDirection: 'row',
-    margin: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    borderColor: 'green',
-    borderWidth: 2
-  },
-
-  
-  buttonMyEventText1: {
-    color: '#FFFFFF',
-    fontSize: 20
-  },
-  buttonCreateEvents: {
-   
-    backgroundColor: '#364753',
-    width: '70%',
-    alignItems: 'center',
-    height: 30,
-    justifyContent: 'center',
-    borderRadius: 15,
-    borderColor: '#3D5D75',
-    borderWidth: 2,
-  },
-  buttonCreateContainer: {
-    
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 10,
-  
-    
-    
-  }
-  
-})

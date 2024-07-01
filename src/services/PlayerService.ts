@@ -54,6 +54,22 @@ export async function getEventById(id: string) {
   }
 }
 
+export async function getEventsByPlayerId(playerId: string) {
+  try {
+    const token = await AsyncStorage.getItem('token'); // Obtém o token armazenado
+    const resultado = await Api.get('api/players/' + playerId + '/events', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(resultado.data)
+    return resultado.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
 export async function createEvent(Evento: Events) {
   if (!Evento) return null;
   try {
@@ -89,7 +105,8 @@ export async function verifyEventsByID(userId: String ){
 export async function checkUserIsSubscribedToEvent(userId: string, event: any) {
   try {
     const playerIsInEvent = event.playerIds.includes(userId);
-    return playerIsInEvent !== undefined;
+    console.log("player is in event?" + playerIsInEvent)
+    return playerIsInEvent;
   } catch (error) {
     console.error('Erro ao verificar inscrição do usuário:', error);
     return false;

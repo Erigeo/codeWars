@@ -22,6 +22,7 @@ export default function Eventos() {
         }
     }, [dataUser]); 
 
+    // TODO stop doing this
     const fetchEvents = async () => {  
         try {
             const token = await AsyncStorage.getItem('token');  
@@ -33,7 +34,7 @@ export default function Eventos() {
             });
             setEvents(response.data);
         } catch (error) {
-            console.error('Error fetching player events:', error);
+            console.error('Error fetching events:', error);
         }
     };
 
