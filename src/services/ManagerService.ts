@@ -118,6 +118,28 @@ export async function finalizeRound(eventId: string) {
   }
 }
 
+export async function finishEvent(eventId: string) {
+  if (!eventId) return null;
+
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.log('Token não encontrado');
+      return null;
+    }
+
+    const resultado = await Api.post(`api/events/${eventId}/finalize`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return true;
+  } catch (e) {
+    console.error('Erro ao finalizar evento:', e);
+    return null;
+  }
+}
+
 
 
 

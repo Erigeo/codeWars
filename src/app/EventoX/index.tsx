@@ -20,7 +20,9 @@ export default function EventoX() {
     availablePairings,
     getAvailablePairings,
     playerDetails,
-    fetchPlayerDetails
+    fetchPlayerDetails,
+    eventoFinalizado,
+    finalizarEvent
   } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
   const { id } = useLocalSearchParams();
@@ -73,6 +75,14 @@ export default function EventoX() {
 
   async function startEventX() {
     try {
+      if(event.playerIds.length === 0){
+        console.log("Para inciar um evento é necessário existir Players inscritos.")
+        return null;
+      }
+      if(event.playerIds.length < 2){
+        console.log("Para iniciar um evento de maneira correta é necessário no mínimo 2 jogadores")
+        return null
+      }
       const resultado = await startEvent(id as string);
       if (resultado) {
         return "ebaaa";
@@ -83,17 +93,23 @@ export default function EventoX() {
   }
 
   useEffect(() => {
+
+
     if (id) {
       collectEventDataById(id as string);
       collectPlayersDataByEventId(event);
-      getAvailablePairings(event);
+      if(event.hasStarted && event.finished==false){
+        getAvailablePairings(event);
+        console.log(eventoFinalizado)
+      if(eventoFinalizado == false){
       setPairings(playerDetails.map(detail => ({
         playerOneId: detail.playerOneId,
         playerTwoId: detail.playerTwoId,
         result: -1
       })));
-      
     }
+    }
+  }
   }, [id, Renderize]);
 
   return (
@@ -162,92 +178,133 @@ export default function EventoX() {
         </View>
       )}
 
-      {selectedButton === 3 && (
-        <View>
-          <Text style={styles.TextTitleDetalhes}>Rodada</Text>
-          <View style={styles.flatListContainer}>
-            <FlatList
-  data={playerDetails}
-  style={styles.flatList}
-  renderItem={({ item, index }) => {
-    if (!item.playerOneId || !item.playerTwoId) return null;
-    const pairing = pairings[index];
-    return (
-      <View style={styles.myParticipantsPairing}>
-        <TouchableOpacity
-          onPress={() => handlePressUser(index, 0)}
-          style={styles.cardPairing}
-        >
-          <Image
-            source={require("../../../assets/puffleOrange.png")}
-            style={[
-              styles.imageParticipantCard,
-              pairing?.result === 0 && styles.imagePressed,
-            ]}
-          />
-          <Text style={[styles.nameTitle, pairing?.result === 0 && styles.titlePressed]} numberOfLines={1}
-            ellipsizeMode="tail">{item.playerOne.name}</Text>
-        </TouchableOpacity>
-        <Text style={styles.vsTitle}> VS </Text>
-        <TouchableOpacity
-          onPress={() => handlePressUser(index, 1)}
-          style={styles.cardPairing}
-        >
-          <Text style={[styles.nameTitle, pairing?.result === 1 && styles.titlePressed]} numberOfLines={1}
-            ellipsizeMode="tail">
-            {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
-            
-          </Text>
-          <Image
-            source={require("../../../assets/puffleBlue.png")}
-            style={[
-              styles.imageParticipantCard,
-              pairing?.result === 1 && styles.imagePressed,
-            ]}
-          />
-        </TouchableOpacity>
+{selectedButton === 3 && (
+  <View>
+    <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+    {eventoFinalizado && event.finished ? (
+      <View>
+        <Text>Evento Finalizado!</Text>
       </View>
-    );
-  }}
-  keyExtractor={(item, index) => {
-    if (!item.playerOneId || !item.playerTwoId) {
-      return `default-key-${index}`;
-    }
-    return `${item.playerOneId}-${item.playerTwoId}`;
-  }}
-  showsHorizontalScrollIndicator={false}
-  scrollEnabled={false}
-/>
+    ) :
+    eventoFinalizado  ? (
+      <View>
+        <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
+      </View>
+    )
+   :
+  event.hasStarted == false  ? (
+    <View>
+      <Text>Inicie Evento para gerar pairings</Text>
+    </View>
+  )
 
-          </View>
-          <View style={styles.positionButtonFinishRound}>
-                <Pressable style={styles.buttonFinishRound} onPress={()=> finishRound()}>
-                  <Text style={styles.titleButtonFinishRound}  >Finalizar Round</Text>
-                </Pressable>
-            </View>
-        </View>
-      )}
-
-      {selectedButton === 4 && (
-        <View>
-          <View style={styles.flatListContainer}>
-            <Text style={styles.titleParticipants}>Participantes</Text>
-            <FlatList
-              data={eventPlayers}
-              style={styles.flatList}
-              renderItem={({ item }) => (
-                <View style={styles.myParticipants}>
-                  <Image source={require("../../../assets/puffleOrange.png")} style={styles.imageParticipant} />
-                  <Text>{item.name}</Text>
+    : (
+      <View>
+        <View style={styles.flatListContainer}>
+          <FlatList
+            data={playerDetails}
+            style={styles.flatList}
+            renderItem={({ item, index }) => {
+              if (!item || !item.playerOne || !item.playerTwo) return null;
+              const pairing = pairings[index];
+              return (
+                <View style={styles.myParticipantsPairing}>
+                  <TouchableOpacity
+                    onPress={() => handlePressUser(index, 0)}
+                    style={styles.cardPairing}
+                  >
+                    <Image
+                      source={require("../../../assets/puffleOrange.png")}
+                      style={[
+                        styles.imageParticipantCard,
+                        pairing?.result === 0 && styles.imagePressed,
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.nameTitle,
+                        pairing?.result === 0 && styles.titlePressed,
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.playerOne.name}
+                    </Text>
+                  </TouchableOpacity>
+                  <Text style={styles.vsTitle}> VS </Text>
+                  <TouchableOpacity
+                    onPress={() => handlePressUser(index, 1)}
+                    style={styles.cardPairing}
+                  >
+                    <Text
+                      style={[
+                        styles.nameTitle,
+                        pairing?.result === 1 && styles.titlePressed,
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
+                    </Text>
+                    <Image
+                      source={require("../../../assets/puffleBlue.png")}
+                      style={[
+                        styles.imageParticipantCard,
+                        pairing?.result === 1 && styles.imagePressed,
+                      ]}
+                    />
+                  </TouchableOpacity>
                 </View>
-              )}
-              keyExtractor={(item) => item.id}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-            
+              );
+            }}
+            keyExtractor={(item, index) => {
+              if (!item || !item.playerOneId || !item.playerTwoId) {
+                return `default-key-${index}`;
+              }
+              return `${item.playerOneId}-${item.playerTwoId}`;
+            }}
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={false}
+          />
         </View>
+        <View style={styles.positionButtonFinishRound}>
+          <Pressable style={styles.buttonFinishRound} onPress={finishRound}>
+            <Text style={styles.titleButtonFinishRound}>Finalizar Round</Text>
+          </Pressable>
+        </View>
+      </View>
+    )}
+  </View>
+)}
+
+
+{selectedButton === 4 && (
+  <View>
+    <View style={styles.flatListContainer}>
+      <Text style={styles.titleParticipants}>Participantes</Text>
+      {event.playerIds.length === 0 ? (
+        <Text >Nenhum participante</Text>
+      ) : (
+        <FlatList
+          data={eventPlayers}
+          style={styles.flatList}
+          renderItem={({ item }) => (
+            <View style={styles.myParticipants}>
+              <Image
+                source={require("../../../assets/puffleOrange.png")}
+                style={styles.imageParticipant}
+              />
+              <Text>{item.name}</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          showsHorizontalScrollIndicator={false}
+        />
       )}
+    </View>
+  </View>
+)}
+
       
 
     </View>
