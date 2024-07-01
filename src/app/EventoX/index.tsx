@@ -28,6 +28,7 @@ export default function EventoX() {
   // TODO check modularização
   useEffect(() => {
     console.log("evento" + event.id)
+    console.log("evento no" + event.numberOfParticipants)
     if (id) {
       collectEventDataById(id as string)
         .then(() => setIsLoading(false)) // Evento carregado
@@ -56,11 +57,11 @@ export default function EventoX() {
           <View style={styles.infoCardsContainer}>
             <View style={styles.cardPlayersNumber}>
               <Ionicons name="people" size={28} color="#9747FF" />
-              <Text style={styles.titlePlayersNumber}> 35</Text>
+              <Text style={styles.titlePlayersNumber}>{event.numberOfParticipants}</Text>
             </View>
             <View style={styles.cardEventDate}>
               <Fontisto name="date" size={24} color="#4ECB71" />
-              <Text style={styles.titleEventDate}> 02/05/24</Text>
+              <Text style={styles.titleEventDate}>{event.date}</Text>
             </View>
           </View>
 

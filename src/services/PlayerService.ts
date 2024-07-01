@@ -46,7 +46,8 @@ export async function getEventById(id: string) {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado.data)
+    console.log(resultado)
+    // TODO undefined??? console.log("no of participants:" + resultado.data.numberOfParticipants)
     return resultado.data;
   } catch (e) {
     console.log(e);
