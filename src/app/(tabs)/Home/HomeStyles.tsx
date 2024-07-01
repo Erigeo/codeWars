@@ -229,14 +229,6 @@ export const styles = StyleSheet.create({
     height: 200, // ou ajuste conforme necessário
     resizeMode: 'cover', // ou 'contain' dependendo do comportamento desejado
   },
-  imageIndicatorContainer: {
-    position: 'absolute',
-    bottom: 8,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
   indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -248,11 +240,7 @@ export const styles = StyleSheet.create({
     left: 20,
     right: 20,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     zIndex: 1, // Garante que os indicadores fiquem sobrepostos às imagens
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#2D3841',
   },
 });
