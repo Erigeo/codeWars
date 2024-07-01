@@ -9,7 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { useUserData } from '../../../contexts/AuthContext';
 import { useUserEventData } from '../../../contexts/EventContext';
-
+//TODO bloquear botao depois de se inscrever
+//TODO colocar renderizers
 export default function Home() {
   const { dataUser, collectData, Renderize, dataManager} = useUserData();
 
