@@ -28,6 +28,11 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null); // Referência para timeout do scroll automático
+  const carouselImages = [
+    require('../../../../assets/banner_1.jpg'),
+    require('../../../../assets/banner_2.jpg'),
+    require('../../../../assets/banner_3.jpg'),
+  ];
 
   //TODO dataUser nao tem player id?
   // Inicialize dataUser e playerId
@@ -87,7 +92,7 @@ export default function Home() {
 
 
 
-  const handlePress = (id: string) => { 
+  const handlePress = (id: string) => {
     console.log(id)
     router.push({
       pathname: '/EventoX',
@@ -105,7 +110,7 @@ export default function Home() {
   // Efeito para avançar automaticamente o carrossel a cada 2 segundos
   useEffect(() => {
     const handleAutomaticScroll = () => {
-      const newIndex = (activeIndex + 1) % playerEvents.length;
+      const newIndex = (activeIndex + 1) % carouselImages.length;
       scrollViewRef.current?.scrollTo({
         animated: true,
         x: screenWidth * newIndex,
@@ -129,7 +134,7 @@ export default function Home() {
         clearInterval(scrollTimeout.current);
       }
     };
-  }, [activeIndex, playerEvents]); // Dependências incluem activeIndex e playerEvents
+  }, [activeIndex, carouselImages]); // Dependências incluem activeIndex e playerEvents
 
 
   // Função para lidar com o scroll manual
@@ -139,49 +144,47 @@ export default function Home() {
     setActiveIndex(newIndex);
   };
 
+  const renderCarouselImages = () => {
+    return (
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScrollEndDrag={handleManualScroll} // Chamado quando o usuário termina o scroll manual
+      >
+        {carouselImages.map((image, index) => (
+          <Pressable key={index} style={{ width: screenWidth }} >
+            <Image style={styles.carouselImage} source={image} />
+          </Pressable>
+        ))}
+      </ScrollView>
+    );
+  };
+
 
   return (
     <View style={{ flex: 1, backgroundColor: '#2D3841' }}>
       {/* Carrossel de Imagens */}
-      <View style={{ maxWidth: '100%', marginBottom: 10 }}>
-        {playerEvents.length > 0 ? (
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleManualScroll}
-          >
-            {playerEvents.map((event, index) => (
-              <Pressable key={index} style={{ width: screenWidth }} onPress={() => handlePress(event.id)}>
-                <View style={{ position: 'relative' }}>
-                  <Image
-                    style={styles.carouselImage}
-                    source={event.imagePath}
-                  />
-                  {/* Indicador dentro da imagem */}
-                  <View style={styles.imageIndicatorContainer}>
-                    {playerEvents.map((_, i) => (
-                      <View
-                        key={i}
-                        style={[
-                          styles.indicator,
-                          { backgroundColor: activeIndex === i ? 'green' : 'grey' },
-                        ]}
-                      />
-                    ))}
-                  </View>
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
-        ) : (
-          <Text style={styles.noEventsText}>Nenhum evento disponível</Text>
-        )}
+      <View >
+        {renderCarouselImages()}
+
+        {/* Indicadores */}
+        <View style={styles.overlayIndicatorContainer}>
+          {carouselImages.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.indicator,
+                { backgroundColor: activeIndex === index ? 'white' : 'grey' },
+              ]}
+            />
+          ))}
+        </View>
       </View>
-    
+
       <View style={{ flex: 1, alignItems: 'center' }}>
-        {dataManager && dataManager.role === "ROLE_MANAGER" && dataManager.events.length === 0 ? ( 
+        {dataManager && dataManager.role === "ROLE_MANAGER" && dataManager.events.length === 0 ? (
           <View style={styles.myevents1}>
             <Text style={styles.myEventsDescription}>Você ainda não criou nenhum evento!</Text>
             <Link href={"RegisterEvent"} asChild>
@@ -261,15 +264,14 @@ export default function Home() {
           </View>
         ) : null}
 
-        <View >
-          <Text style={styles.titleUpcomingEvents}>Próximos eventos</Text>
+        <View>
+          <Text style={styles.titleUpcomingEvents}>Mais eventos</Text>
           <View style={styles.myeventsContainer}>
             <FlatList
-              data={events}
-              style={{ maxHeight: '80%' }}
-              renderItem={({ item }) => (
-                <View style={styles.myevents}>
-                  <Image style={styles.imageContainer} source={item.imagePath}></Image>
+              data={events.slice(0, 6)} // Limita a exibição a 6 eventos
+              renderItem={({ item, index }) => (
+                <View style={[styles.myevents, { marginBottom: index === events.slice(0, 6).length - 1 ? 250 : 10}]}>
+                  <Image style={styles.imageContainer} source={item.imagePath} />
                   <View style={styles.titleContainer}>
                     <Text style={styles.titleEventName}>{item.name}</Text>
                     <View style={styles.infoCardsContainer}>
@@ -289,11 +291,11 @@ export default function Home() {
                 </View>
               )}
               keyExtractor={item => item.id}
-              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false} // Para esconder a barra de rolagem vertical, se necessário
+              contentContainerStyle={{ paddingBottom: 20 }} // Adicione um padding na parte inferior para evitar cortes
             />
           </View>
         </View>
-
       </View>
     </View>
   );

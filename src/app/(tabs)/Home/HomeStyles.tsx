@@ -244,11 +244,15 @@ export const styles = StyleSheet.create({
   },
   overlayIndicatorContainer: {
     position: 'absolute',
-    bottom: 8,
-    left: 0,
-    right: 0,
+    bottom: 10,
+    left: 20,
+    right: 20,
     flexDirection: 'row',
     justifyContent: 'center',
     zIndex: 1, // Garante que os indicadores fiquem sobrepostos às imagens
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#2D3841',
   },
 });
