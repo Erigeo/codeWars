@@ -20,7 +20,7 @@ import { styles } from './HomeStyles';
 export default function Home() {
   const { dataUser, collectData, Renderize, dataManager, handleClick } = useUserData();
   const [events, setEvents] = useState([]);
-  const [playerEvents, setPlayerEvents] = useState([]);
+  const [playerEvents, setPlayerEvents] = useState([]); 
   const [playerId, setPlayerId] = useState('');
   const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
 
@@ -36,7 +36,7 @@ export default function Home() {
         setLoading(false); // Concluímos a inicialização
       } catch (error) {
         console.error("Erro ao inicializar os dados:", error); 
-        setLoading(false); // Concluímos mesmo com erro
+        setLoading(false); // Concluímos mesmo com erro 
       }
     };
 
@@ -90,6 +90,13 @@ export default function Home() {
       params: { id },
     });
   };
+
+  const handlePressFindEvents = () => {
+    router.push({
+      pathname: '/Eventos',
+    });
+  };
+
 
 
 
@@ -154,8 +161,8 @@ export default function Home() {
         {dataUser && dataUser.role === "ROLE_PLAYER" && dataUser.appliedEventsId.length === 0 ? (
           <View style={styles.noEventsContainer}>
             <Text style={styles.noEventsText}>Você ainda não está participando de nenhum evento. :(</Text>
-            <Pressable style={styles.buttonContainer}>
-              <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.findEventsButton}>
+            <Pressable style={styles.buttonContainer} onPress={() => handlePressFindEvents()}>
+              <LinearGradient colors={['#58C263', '#E45858']} style={styles.findEventsButton} start={{ x: 0, y: 1 }} end={{ x: 1, y: 1 }}>
                 <Text style={styles.findEventsButtonText}>Encontrar eventos</Text>
               </LinearGradient>
             </Pressable>
