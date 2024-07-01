@@ -107,10 +107,6 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
       try {
         if (eventId) {
           const resultado = await finishEvent(eventId);
-          if (resultado) {
-            setEventoFinalizado(true)
-            
-          }
         }
       } catch (e) {
         console.log(e);

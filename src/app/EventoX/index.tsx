@@ -10,6 +10,7 @@ import styles from './EventoXStyles';
 import { finalizeRound, savePairings, startEvent } from '../../services/ManagerService';
 
 export default function EventoX() {
+  //const { dataUser, collectData, Renderize, dataManager} = useUserData();
   const {
     event,
     collectEventDataById,
@@ -25,7 +26,8 @@ export default function EventoX() {
     finalizarEvent
   } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
-  const { id } = useLocalSearchParams();
+  const { id, role } = useLocalSearchParams();
+
   const [isPressed, setIsPressed] = useState(false);
   const [pairings, setPairings] = useState([]);
 
@@ -128,9 +130,13 @@ export default function EventoX() {
               <Text style={styles.titleEventDate}>02/05/24</Text>
             </View>
           </View>
+          {event.hasStarted == false ?(
           <Pressable style={styles.buttonSeeEvent} onPress={() => startEventX()}>
             <Text style={styles.buttonMyEventText1}>Iniciar Evento</Text>
           </Pressable>
+          ) :  <Pressable style={styles.buttonSeeEvent} onPress={() => startEventX()}>
+          <Text style={styles.buttonMyEventText1}>Iniciado</Text>
+        </Pressable>}
         </View>
       </View>
 
@@ -178,7 +184,7 @@ export default function EventoX() {
         </View>
       )}
 
-{selectedButton === 3 && (
+{selectedButton === 3 && role === "ROLE_MANAGER" &&(
   <View>
     <Text style={styles.TextTitleDetalhes}>Rodada</Text>
     {eventoFinalizado && event.finished ? (
@@ -189,6 +195,11 @@ export default function EventoX() {
     eventoFinalizado  ? (
       <View>
         <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
+        <View style={styles.positionButtonFinishRound}>
+          <Pressable style={styles.buttonFinishRound} onPress={() => finalizarEvent(id as string)}>
+            <Text style={styles.titleButtonFinishRound}>Finalizar Evento</Text>
+          </Pressable>
+        </View>
       </View>
     )
    :
@@ -198,7 +209,7 @@ export default function EventoX() {
     </View>
   )
 
-    : (
+    :  (
       <View>
         <View style={styles.flatListContainer}>
           <FlatList
@@ -276,6 +287,108 @@ export default function EventoX() {
     )}
   </View>
 )}
+
+
+
+{selectedButton === 3 && role === "ROLE_PLAYER" &&(
+  <View>
+    <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+    {eventoFinalizado && event.finished ? (
+      <View>
+        <Text>Evento Finalizado!</Text>
+      </View>
+    ) :
+    eventoFinalizado  ? (
+      <View>
+        <Text>Combates finalizados, aguarde o resultado!</Text>
+      </View>
+    )
+   :
+  event.hasStarted == false  ? (
+    <View>
+      <Text>Aguarde a formatação de pairings!</Text>
+    </View>
+  )
+
+    :  (
+      <View>
+        <View style={styles.flatListContainer}>
+          <FlatList
+            data={playerDetails}
+            style={styles.flatList}
+            renderItem={({ item, index }) => {
+              if (!item || !item.playerOne || !item.playerTwo) return null;
+              const pairing = pairings[index];
+              return (
+                <View style={styles.myParticipantsPairing}>
+                  <TouchableOpacity
+                    onPress={() => handlePressUser(index, 0)}
+                    style={styles.cardPairing}
+                  >
+                    <Image
+                      source={require("../../../assets/puffleOrange.png")}
+                      style={[
+                        styles.imageParticipantCard,
+                        pairing?.result === 0 && styles.imagePressed,
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.nameTitle,
+                        pairing?.result === 0 && styles.titlePressed,
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.playerOne.name}
+                    </Text>
+                  </TouchableOpacity>
+                  <Text style={styles.vsTitle}> VS </Text>
+                  <TouchableOpacity
+                    onPress={() => handlePressUser(index, 1)}
+                    style={styles.cardPairing}
+                  >
+                    <Text
+                      style={[
+                        styles.nameTitle,
+                        pairing?.result === 1 && styles.titlePressed,
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
+                    </Text>
+                    <Image
+                      source={require("../../../assets/puffleBlue.png")}
+                      style={[
+                        styles.imageParticipantCard,
+                        pairing?.result === 1 && styles.imagePressed,
+                      ]}
+                    />
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+            keyExtractor={(item, index) => {
+              if (!item || !item.playerOneId || !item.playerTwoId) {
+                return `default-key-${index}`;
+              }
+              return `${item.playerOneId}-${item.playerTwoId}`;
+            }}
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+        </View>
+        <View style={styles.positionButtonFinishRound}>
+          <Pressable style={styles.buttonFinishRound} onPress={finishRound}>
+            <Text style={styles.titleButtonFinishRound}>Finalizar Round</Text>
+          </Pressable>
+        </View>
+      </View>
+    )}
+  </View>
+)}
+
 
 
 {selectedButton === 4 && (

@@ -118,9 +118,8 @@ export async function finalizeRound(eventId: string) {
   }
 }
 
-export async function finishEvent(eventId: string) {
-  if (!eventId) return null;
 
+export async function finishEvent(eventId: string) {
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) {
@@ -128,14 +127,25 @@ export async function finishEvent(eventId: string) {
       return null;
     }
 
-    const resultado = await Api.post(`api/events/${eventId}/finalize`, {
+    console.log(`Finalizando evento com ID: ${eventId}`);
+
+    const resultado = await Api.put(`api/events/${eventId}/finalize`, {}, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     });
+
+    console.log('Evento finalizado com sucesso:', resultado.data);
     return true;
   } catch (e) {
-    console.error('Erro ao finalizar evento:', e);
+    if (e.response) {
+      console.error('Erro ao finalizar evento:', e.response.data);
+      console.error('Status:', e.response.status);
+      console.error('Cabeçalhos:', e.response.headers);
+    } else {
+      console.error('Erro ao finalizar evento:', e.message);
+    }
     return null;
   }
 }

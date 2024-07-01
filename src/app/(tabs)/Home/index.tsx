@@ -20,12 +20,12 @@ export default function Home() {
   },
   [Renderize])
 
-  const handlePress = (id: string) => {
+  const handlePress = (id: string, role: string, userId: string) => {
     console.log(id)
     const teste = true
     router.push({
       pathname: '/EventoX',
-      params:{ id},
+      params:{ id, role, userId},
     });
   };
 
@@ -77,7 +77,7 @@ export default function Home() {
                     </View>
                   </View>
                 
-                  <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id)} >
+                  <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id, dataManager.role, dataManager.id)} >
                     <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
                   </Pressable>
                 
@@ -106,7 +106,7 @@ export default function Home() {
        
         <View style={styles.myevents}>
           <Text style={styles.myEventsDescription}>Voce ainda não está participando de nenhum evento!</Text>
-         <Pressable style={styles.buttonSearchEvents}>
+         <Pressable style={styles.buttonSearchEvents} >
             <Text style={styles.buttonMyEventText}>Encontrar Eventos</Text>
          </Pressable>
       

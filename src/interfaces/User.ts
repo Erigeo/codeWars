@@ -19,6 +19,7 @@ export interface Player {
 }
 
 export interface Manager {
+    id?: string;
     email: string; 
     password: string;
     role?: string;
