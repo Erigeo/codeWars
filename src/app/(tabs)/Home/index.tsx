@@ -1,4 +1,4 @@
-// TODO consertar render
+// TODO consertar update eventos on inscrição
 import { View, Text, Pressable, FlatList, ScrollView } from 'react-native'
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
