@@ -116,21 +116,21 @@ export default function Home() {
         x: screenWidth * newIndex,
       });
       setActiveIndex(newIndex);
-    };
+    };   
 
     // Define o intervalo para o scroll automático
     const startAutomaticScroll = () => {
-      scrollTimeout.current = setInterval(handleAutomaticScroll, 3000); // 1500 milissegundos = 1.5 segundos
+      scrollTimeout.current = setInterval(handleAutomaticScroll, 3000); // 1500 milissegundos = 1.5 segundos    
     };
 
     // Inicia o scroll automático apenas se houver eventos do jogador
-    if (playerEvents.length > 0) {
+    if (playerEvents.length > 0) {  
       startAutomaticScroll();
     }
 
     // Limpa o intervalo ao desmontar o componente
     return () => {
-      if (scrollTimeout.current) {
+      if (scrollTimeout.current) { 
         clearInterval(scrollTimeout.current);
       }
     };
@@ -189,7 +189,7 @@ export default function Home() {
             <Text style={styles.myEventsDescription}>Você ainda não criou nenhum evento!</Text>
             <Link href={"RegisterEvent"} asChild>
               <Pressable style={styles.buttonSearchEvents}>
-                <Text style={styles.buttonMyEventText}>Criar evento</Text>
+                <Text style={styles.buttonMyEventText}>Criar evento</Text> 
               </Pressable>
             </Link>
           </View>
@@ -202,7 +202,7 @@ export default function Home() {
               style={{ maxHeight: '80%' }}
               renderItem={({ item }) => (
                 <View style={styles.myevents}>
-                  <Image style={styles.imageContainer} source={item.imagePath}></Image>
+                  <Image style={styles.imageContainer} source={{ uri : `${item.imagePath}`}}></Image>
                   <View style={styles.titleContainer}>
                     <Text style={styles.titleEventName}>{item.name}</Text>
                     <View style={styles.infoCardsContainer}>
@@ -255,7 +255,7 @@ export default function Home() {
                   style={styles.playerEventCard}
                   onPress={() => handlePress(event.id)}
                 >
-                  <Image style={styles.playerEventImage} source={event.imagePath} />
+                  <Image style={styles.playerEventImage} source={event.imagePath} /> 
                   <Text style={styles.playerEventName}>{event.name}</Text>
                   <Text style={styles.playerEventDate}>{event.date}</Text>
                 </Pressable>
@@ -268,9 +268,9 @@ export default function Home() {
           <Text style={styles.titleUpcomingEvents}>Mais eventos</Text>
           <View style={styles.myeventsContainer}>
             <FlatList
-              data={events.slice(0, 6)} // Limita a exibição a 6 eventos
+              data={events} // TODO limitar a exibição a X eventos (splice 0,X)
               renderItem={({ item, index }) => (
-                <View style={[styles.myevents, { marginBottom: index === events.slice(0, 6).length - 1 ? 250 : 10}]}>
+                <View style={[styles.myevents, { marginBottom: index === events.length - 1 ? 250 : 10}]}>
                   <Image style={styles.imageContainer} source={item.imagePath} />
                   <View style={styles.titleContainer}>
                     <Text style={styles.titleEventName}>{item.name}</Text>

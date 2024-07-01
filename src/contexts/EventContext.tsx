@@ -24,7 +24,7 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
     try {
       if (eventId) {
         const resultado = await getEventById(eventId);
-        console.log(resultado)
+        //console.log(resultado.data)
         if (resultado) {
           setEvent(resultado);
         }
