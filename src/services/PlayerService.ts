@@ -29,7 +29,8 @@ export async function getUserData(id: string) {
         Authorization: `Bearer ${token}`
       }
     });
-    //console.log(resultado.data)
+   //console.log(resultado.data)
+
     return resultado.data;
   } catch (e) {
     console.log(e);

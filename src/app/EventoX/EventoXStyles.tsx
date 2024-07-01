@@ -190,7 +190,40 @@ export default StyleSheet.create({
           marginBottom: 10,
           fontSize: 24,
           color: '#fff'
-        }
+        },
+        cardPairing:{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 20,
+          marginHorizontal: 10
+        },
+        myParticipantsPairing: {
+          flexDirection: 'row',
+          borderRadius: 15,
+          backgroundColor: '#3D5D75',
+          width: '100%',
+          height: 50,
+          marginBottom: 10,
+          alignItems: 'center',
+          gap: 10,
+          paddingHorizontal: 10,
+          justifyContent: 'space-between'
+          
+        },
+        vsTitle: {
+          color: '#fff',
+          fontSize: 20
+        },
+        nameTitle: {
+          color: '#fff'
+        },
+        imageParticipantCard: {
+          borderRadius: 100,
+          width: 35,
+          height: 35,
+          backgroundColor: 'white',
+          
+        },
   
   })
   
