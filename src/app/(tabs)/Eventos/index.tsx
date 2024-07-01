@@ -90,7 +90,7 @@ export default function Eventos() {
 
  return (
     <View style={{ flex: 1, backgroundColor: '#2D3841' }}>
-        <Text style={styles.title}>Meus Eventos</Text>
+        <Text style={styles.title}>Todos os Eventos</Text>
         <TextInput
             style={styles.searchInput}
             placeholder="Buscar evento"
