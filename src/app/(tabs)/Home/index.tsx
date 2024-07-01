@@ -1,3 +1,4 @@
+// TODO consertar render
 import { View, Text, Pressable, FlatList, ScrollView } from 'react-native'
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react'
@@ -21,30 +22,48 @@ export default function Home() {
   const [events, setEvents] = useState([]);
   const [playerEvents, setPlayerEvents] = useState([]);
   const [playerId, setPlayerId] = useState('');
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
 
 
   //TODO dataUser nao tem player id?
+  // Inicialize dataUser e playerId
   useEffect(() => {
-    const fetchData = async () => {
+    const initializeData = async () => {
       try {
-        collectData();
+        await collectData(); // Supondo que collectData inicializa dataUser
         const playerIdFromStorage = await AsyncStorage.getItem('userId');
         setPlayerId(playerIdFromStorage);
+        setLoading(false); // Concluímos a inicialização
+      } catch (error) {
+        console.error("Erro ao inicializar os dados:", error); 
+        setLoading(false); // Concluímos mesmo com erro
+      }
+    };
 
-        if (dataUser && dataUser.role === "ROLE_PLAYER" && playerIdFromStorage) {
-          console.log("Player ID obtido:", playerIdFromStorage);
-          const events = await getEventsByPlayerId(playerIdFromStorage); // Chama a função para obter os eventos
+    initializeData();
+  }, []); // Executa apenas uma vez no início
+
+  // Use os dados quando estiverem prontos
+  useEffect(() => {
+    if (loading || !dataUser || !playerId) return; // Espera até que os dados estejam prontos
+
+    console.log("user effect");
+
+    const fetchData = async () => {
+      try {
+        if (dataUser.role === "ROLE_PLAYER") {
+          console.log("Player ID obtido:", playerId);
+          const events = await getEventsByPlayerId(playerId); // Chama a função para obter os eventos
           setPlayerEvents(events); // Atualiza o estado playerEvents com os eventos obtidos
+          fetchEvents();
         }
-
-        fetchEvents();
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
     };
 
-    fetchData(); // Chama a função assíncrona imediatamente
-  }, [Renderize]);
+    fetchData();
+  }, [dataUser, playerId, loading]); // Adiciona loading, dataUser e playerId como dependências
 
   // TODO stop doing this
   const fetchEvents = async () => {
@@ -71,6 +90,7 @@ export default function Home() {
       params: { id },
     });
   };
+
 
 
 
@@ -152,7 +172,7 @@ export default function Home() {
                   <Text style={styles.playerEventName}>{event.name}</Text>
                   <Text style={styles.playerEventDate}>{event.date}</Text>
                 </View>
-              ))} 
+              ))}
             </ScrollView>
           </View>
         ) : null}
