@@ -99,7 +99,7 @@ export default function Home() {
     const teste = true
     router.push({
       pathname: '/EventoX',
-      params:{ id, role, userId},
+      params: { id, role, userId },
     });
   };
 
@@ -263,7 +263,8 @@ export default function Home() {
                 >
                   <Image style={styles.playerEventImage} source={event.imagePath} />
                   <Text style={styles.playerEventName}>{event.name}</Text>
-                  <Text style={styles.playerEventDate}>{event.date}</Text>
+                  <Fontisto style={styles.titleEventDate} name="date" size={24} color="#4ECB71" />
+                  <Text style={styles.titleEventDate}>{event.date == (undefined || null) ? 'A definir' : event.date}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -278,7 +279,7 @@ export default function Home() {
                 data={events} // TODO limitar a exibição a X eventos (splice 0,X)
                 renderItem={({ item, index }) => (
                   <View style={[styles.myevents, { marginBottom: index === events.length - 1 ? 250 : 10 }]}>
-                    <Image style={styles.imageContainer} source={item.imagePath} />
+                    <Image style={styles.imageContainer} source={{ uri: item.imagePath }} />
                     <View style={styles.titleContainer}>
                       <Text style={styles.titleEventName}>{item.name}</Text>
                       <View style={styles.infoCardsContainer}>
@@ -288,12 +289,20 @@ export default function Home() {
                         </View>
                         <View style={styles.cardEventDate}>
                           <Fontisto name="date" size={24} color="#4ECB71" />
-                          <Text style={styles.titleEventDate}>{item.date}</Text>
+                          <Text style={styles.titleEventDate}>{item.date == (undefined || null) ? 'A definir' : item.date}</Text>
+                        </View>
+                        <View style={styles.cardLocation}>
+                          <Ionicons name="location" size={20} color="#EC3657" />
+                          <Text style={styles.titleLocation}>{item.location == (undefined || null) ? 'A definir' : item.location}</Text>
                         </View>
                       </View>
                       <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id, dataUser.role, playerId)}>
-                        <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
+                        <LinearGradient colors={['#58C263', '#E45858']} style={styles.viewEventButton} start={{ x: 0, y: 1 }} end={{ x: 1, y: 1 }}>
+                          <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
+                        </LinearGradient>
                       </Pressable>
+
+
                     </View>
                   </View>
                 )}

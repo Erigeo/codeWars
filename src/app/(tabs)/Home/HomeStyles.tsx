@@ -12,9 +12,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   myeventsContainer: {
-    flex: 1,
-    width: '95%',
-    marginTop: 10,
+    padding: 10,
   },
   myevents: {
     flexDirection: 'row',
@@ -50,7 +48,8 @@ export const styles = StyleSheet.create({
     fontSize: 20
   },
   imageContainer: {
-    padding: 70,
+    width: '20%',
+    borderRadius: 10,
   },
   titleContainer: {
     flex: 1,
@@ -61,12 +60,14 @@ export const styles = StyleSheet.create({
   },
   titleEventName: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   infoCardsContainer: {
     flex: 1,
     flexDirection: 'row',
-    gap: -25
+    gap: 25
   },
   cardPlayersNumber: {
     flex: 1,
@@ -91,7 +92,9 @@ export const styles = StyleSheet.create({
   },
   titleEventDate: {
     color: '#4ECB71',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    alignItems: 'flex-end', 
+    marginTop: 9,
   },
   buttonSeeEvent: {
     flex: 1,
@@ -102,17 +105,19 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    borderColor: 'green',
-    borderWidth: 2
+    //borderColor: 'green',
+    //borderWidth: 2
   },
 
 
   buttonMyEventText1: {
     color: '#FFFFFF',
-    fontSize: 20
+    fontSize: 20,
+    textAlign: 'center', 
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonCreateEvents: {
-
     backgroundColor: '#364753',
     width: '70%',
     alignItems: 'center',
@@ -152,6 +157,17 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
   },
+  // Ajuste o estilo viewEventButton para garantir que o conteúdo seja centralizado
+  viewEventButton: {
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 5,  // Ajuste conforme necessário para manter o espaço vertical adequado
+    paddingHorizontal: 10, // Ajuste conforme necessário para aumentar a largura do botão
+    minHeight: 30, // Defina uma altura mínima suficiente para o gradiente
+    overflow: 'hidden', // Evita que o conteúdo seja cortado
+  },
+  
   findEventsButtonText: {
     color: '#FFF',
     fontSize: 16,
@@ -167,6 +183,7 @@ export const styles = StyleSheet.create({
     width: 200, // Ajuste a largura conforme necessário
     alignItems: 'center',
   },
+
   playerEventImage: {
     width: '100%',
     height: 100,
@@ -185,10 +202,11 @@ export const styles = StyleSheet.create({
 
 
   titleUpcomingEvents: {
-    color: '#FFFFFF',
-    fontSize: 24,
     marginTop: 20,
-    marginBottom: 10,
+    marginLeft: 10,
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   upcomingEventCard: {
     backgroundColor: '#364753',
@@ -242,5 +260,128 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     zIndex: 1, // Garante que os indicadores fiquem sobrepostos às imagens
+  },
+  title: {
+    marginTop: 20,
+    marginLeft: 10,
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  searchInput: {
+    backgroundColor: '#364753',
+    padding: 10,
+    borderRadius: 15,
+    margin: 10,
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  flatListContent: {
+    paddingHorizontal: 10,
+  },
+  eventCard: {
+    flexDirection: 'row',     // imagem + conteúdo em row
+    backgroundColor: '#364753',
+    borderRadius: 15,
+    marginVertical: 8,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  image: {
+    width: '35%',
+    height: 120,
+    borderRadius: 15,
+  },
+  cardContent: {
+    flex: 1,
+    marginLeft: 16,           // margem entre a imagem e o restante
+    justifyContent: 'center',
+  },
+  eventTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 5,
+  },
+  tag: {
+    backgroundColor: '#FF6347',
+    color: '#FFFFFF',
+    padding: 4,
+    borderRadius: 5,
+    marginRight: 5,
+    fontSize: 11,
+  },
+  eventLocation: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 4,
+  },
+  eventDate: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 4,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  eventInfo: {
+    fontSize: 14,
+    color: '#888',
+    marginLeft: 4,
+  },
+  dateInfo: {
+    fontSize: 14,
+    color: '#4ECB71',
+    marginLeft: 4,
+  },
+  locationInfo: {
+    fontSize: 14,
+    color: '#EC3657',
+    marginLeft: 4,
+  },
+  peopleInfo: {
+    fontSize: 14,
+    color: '#9747FF',
+    marginLeft: 4,
+  },
+  infoGroup: {
+    flexDirection: 'row',   // Organizando ícone + texto em row
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  tag1: {
+    backgroundColor: '#A25FCA',
+    color: '#FFFFFF',
+  },
+  tag2: {
+    backgroundColor: '#5FCA77',
+    color: '#FFFFFF',
+  },
+  tag3: {
+    backgroundColor: '#3D69DA',
+    color: '#FFFFFF',
+  },
+  cardLocation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleLocation: {
+    fontSize: 14,
+    color: '#EC3657',
+    marginLeft: 4,
+  },
+  eventDateContainer: {
+    flexDirection: 'row-reverse', // Alinha os itens à direita
+    alignItems: 'flex-end', // Centraliza os itens verticalmente
   },
 });
