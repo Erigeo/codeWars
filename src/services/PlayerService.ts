@@ -48,6 +48,7 @@ export async function getEventById(id: string) {
       }
     });
 
+
     // TODO tratamento temp
     if (resultado.data.date == undefined || resultado.data.date == null) {
       resultado.data.date = "A definir"
@@ -56,6 +57,10 @@ export async function getEventById(id: string) {
     if (resultado.data.location == undefined || resultado.data.date == null) {
       resultado.data.location = "A definir"
     }
+
+
+  
+    // TODO undefined??? console.log("no of participants:" + resultado.data.numberOfParticipants)
 
     return resultado.data;
   } catch (e) {

@@ -191,3 +191,34 @@ export async function startEvent(id: string) {
     return null;
   }
 }
+
+export async function resultsEvent(eventId: string) {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.log('Token não encontrado');
+      return null;
+    }
+
+    const resultado = await Api.get(`api/events/${eventId}/result-ranking`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log(resultado.data);
+    return resultado.data;
+  } catch (e) {
+    if (e.response) {
+      console.error('Erro ao obter dados do final do evento:', e.response.data);
+      console.error('Status:', e.response.status);
+      console.error('Cabeçalhos:', e.response.headers);
+    } else if (e.request) {
+      console.error('Erro de requisição:', e.request);
+    } else {
+      console.error('Erro ao finalizar evento:', e.message);
+    }
+    return null;
+  }
+}

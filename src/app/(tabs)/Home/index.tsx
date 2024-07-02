@@ -22,7 +22,7 @@ const { width: screenWidth } = Dimensions.get('window');
 
 
 export default function Home() {
-  const { dataUser, collectData, Renderize, dataManager, handleClick } = useUserData();
+  const { dataUser, collectData, dataManager,  } = useUserData();
   const [events, setEvents] = useState([]);
   const [playerEvents, setPlayerEvents] = useState([]);
   const [playerId, setPlayerId] = useState('');
@@ -30,6 +30,9 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null); // Referência para timeout do scroll automático
+  const {
+    handleClick,
+  } = useUserEventData();
   const carouselImages = [
     require('../../../../assets/banner_1.jpg'),
     require('../../../../assets/banner_2.jpg'),

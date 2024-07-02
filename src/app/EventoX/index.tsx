@@ -9,8 +9,13 @@ import { useUserEventData } from "../../contexts/EventContext";
 import SubscribeButton from '../../components/SubscribeButton';
 import { useEventData } from '../../hooks/useEventData';
 import styles from './EventoXStyles';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { finalizeRound, savePairings, startEvent } from '../../services/ManagerService';
+import { finalizeRound, resultsEvent, savePairings, startEvent } from '../../services/ManagerService';
+import { EventResult, Player, PlayerResult } from "../../interfaces/User";
+import { getUserData } from "../../services/PlayerService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // TODO visao de usuario: tirar os icones + tudo que não pertença a ele - FEITO?
 // TODO ver isso aí da grade
@@ -20,7 +25,7 @@ import { finalizeRound, savePairings, startEvent } from '../../services/ManagerS
 // TODO nome dos players maiores
 // TODO evento finaliazdo = mudar cor (esta preto)
 export default function EventoX() {
-  const { dataUser, collectData, Renderize} = useUserData();
+  const {dataUser} = useUserData();
   const {
     event,
     collectEventDataById,
@@ -32,14 +37,19 @@ export default function EventoX() {
     playerDetails,
     fetchPlayerDetails, 
     eventoFinalizado,
-    finalizarEvent
+    finalizarEvent,
+    Renderize,
+    setEventPlayers
   } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
   const { id, role } = useLocalSearchParams();
   const [pairings, setPairings] = useState([]);
   const { userRole, isUserSubscribed, handleInscricao, isEventoFull } = useEventData(event);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [eventResult, setEventResult] = useState<PlayerResult>(null);
+  const [champion, setChampion] = useState<PlayerResult>(null);
+  const [championPlayer, setChampionPlayer] = useState<Player>(null);
+
 
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -98,6 +108,7 @@ export default function EventoX() {
 
   useEffect(() => {
     if (id) {
+      setEventPlayers([])
       setIsLoading(false);
       collectEventDataById(id as string);
       collectPlayersDataByEventId(event);
@@ -112,6 +123,9 @@ export default function EventoX() {
       })));
     }
     }
+    if(eventoFinalizado){
+      eventResults();
+    }
   }
   }, [id, Renderize]);
 
@@ -124,6 +138,45 @@ export default function EventoX() {
       </View>;
   }
 
+   // Altere `any` para o tipo específico de `EventResult`, se possível
+
+   async function eventResults() {
+    try {
+      const result = await resultsEvent(id as string); // Supondo que 'id' está definido em algum lugar
+      if (result) {
+        setEventResult(result); 
+        await eventResultChampion(result); // Passar o objeto PlayerResult diretamente
+      }
+    } catch (e) {
+      console.log('Erro ao processar resultados do evento:', e);
+    }
+  }
+  
+  
+  async function eventResultChampion(playersResult: PlayerResult[]) {
+    try {
+      if (playersResult && playersResult.length > 0) {
+        const championPlayer = playersResult.reduce((prev, current) => {
+          // Verifica se prev é undefined (primeira iteração) ou se current tem mais pontos que prev
+          return (!prev || current.eventPoints > prev.eventPoints) ? current : prev;
+        });
+  
+        console.log('Jogador campeão encontrado:', championPlayer); // Verifica o campeão encontrado
+        console.log(championPlayer.playerId)
+        const resultado = await getUserData(championPlayer.playerId)
+        setChampionPlayer(resultado)
+      } else {
+        console.log('Dados dos jogadores incompletos ou vazios.');
+      }
+    } catch (e) {
+      console.log('Erro ao determinar o campeão do evento:', e);
+    }
+  }
+  
+
+  
+  
+  
 
 
   async function startEventX() {
@@ -158,7 +211,7 @@ export default function EventoX() {
         <View style={styles.infoCardsContainer}>
           <View style={styles.cardPlayersNumber}>
             <Ionicons name="people" size={28} color="#9747FF" />
-            <Text style={styles.titlePlayersNumber}>{eventPlayers.length}</Text>
+            <Text style={styles.titlePlayersNumber}>{event?.playerIds?.length ?? 0}</Text>
           </View>
           <View style={styles.cardEventDate}>
             <Fontisto name="date" size={24} color="#4ECB71" />
@@ -178,16 +231,16 @@ export default function EventoX() {
     </View>
 
       <View style={styles.navbarcontainer}>
-        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(1)}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(1); handleClick();}}>
           <Text style={[selectedButton === 1 && styles.selectedText]}>Detalhes</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(2)}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(2); handleClick();}}>
           <Text style={[selectedButton === 2 && styles.selectedText]}>Torneio</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(3)}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(3); handleClick();}}>
           <Text style={[selectedButton === 3 && styles.selectedText]}>Rodada</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(4)}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(4); handleClick();}}>
           <Text style={[selectedButton === 4 && styles.selectedText]}>Grade</Text>
         </Pressable>
       </View>
@@ -215,9 +268,31 @@ export default function EventoX() {
       {selectedButton === 2 && (
         <View>
           <View style={styles.textTitleContainer}>
+
             <Text style={styles.TextTitleTorneio}>Torneio</Text>
           </View>
-          <View></View>
+          <View style={styles.flatListContainer}>
+      <Text style={styles.titleParticipants}>Participantes</Text>
+      {event.playerIds.length === 0 ? (
+        <Text >Nenhum participante</Text>
+      ) : (
+        <FlatList
+          data={eventPlayers}
+          style={styles.flatList}
+          renderItem={({ item }) => (
+            <View style={styles.myParticipants}>
+              <Image
+                source={require("../../../assets/puffleOrange.png")}
+                style={styles.imageParticipant}
+              />
+              <Text>{item.name}</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          showsHorizontalScrollIndicator={false}
+        />
+      )}
+    </View>
         </View>
       )}
 
@@ -225,15 +300,36 @@ export default function EventoX() {
   <View>
     <Text style={styles.TextTitleDetalhes}>Rodada</Text>
     {eventoFinalizado && event.finished ? (
-      <View>
-        <Text>Evento Finalizado!</Text>
+      <View style={styles.containerEventoFinalizado}>
+        <View style={styles.cardChampTitle}>
+        <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+        <View style={styles.cardChampAjuste}>
+          <Text  style={styles.titleEventoFinalizado}> Parabéns!</Text>
+          <Entypo name="trophy" size={24} color="gold" />
+          <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+        </View>
+        </View>
+        {championPlayer ? (
+          <View style={styles.cardChamp}>
+            <Image
+                      source={require("../../../assets/puffleOrange.png")}
+                      style={[
+                        styles.imageParticipantCard1
+                        
+                      ]}
+                    />
+            <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+            </View>
+    ) : (
+      <Text>Campeão não definido</Text>
+    )}
       </View>
     ) :
     eventoFinalizado  ? (
       <View>
         <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
         <View style={styles.positionButtonFinishRound}>
-          <Pressable style={styles.buttonFinishRound} onPress={() => finalizarEvent(id as string)}>
+          <Pressable style={styles.buttonFinishRound} onPress={() => {finalizarEvent(id as string); eventResults();}}>
             <Text style={styles.titleButtonFinishRound}>Finalizar Evento</Text>
           </Pressable>
         </View>
@@ -329,12 +425,61 @@ export default function EventoX() {
 
 {selectedButton === 3 && role === "ROLE_PLAYER" &&(
   <View>
-    <Text style={styles.TextTitleDetalhes}>Rodada</Text>
-    {eventoFinalizado && event.finished ? (
-      <View>
-        <Text>Evento Finalizado!</Text>
+  <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+  {eventoFinalizado && event.finished ? (
+    <View style={styles.containerEventoFinalizado}>
+      <View style={styles.cardChampTitle}>
+      <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+      <View style={styles.cardChampAjuste}>
+        <Text  style={styles.titleEventoFinalizado}> Parabéns!</Text>
+        <Entypo name="trophy" size={24} color="gold" />
+        <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
       </View>
-    ) :
+      </View>
+      {championPlayer ? (
+        <View style={styles.cardChamp}>
+          <Image
+                    source={require("../../../assets/puffleOrange.png")}
+                    style={[
+                      styles.imageParticipantCard1
+                      
+                    ]}
+                  />
+          <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+          </View>
+  ) : (
+    <Text>Campeão não definido</Text>
+  )}
+    </View>
+  ): 
+  eventoFinalizado && event.finished &&  dataUser.id === championPlayer.id ?(
+    <View>
+        <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+  
+         <View style={styles.containerEventoFinalizado}>
+          <View style={styles.cardChampTitle}>
+          <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+          <View style={styles.cardChampAjuste}>
+           <Text  style={styles.titleEventoFinalizado}> Parabéns! você venceu!</Text>
+          <Entypo name="trophy" size={24} color="gold" />
+          <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+      </View>
+      </View>
+      
+        <View style={styles.cardChamp}>
+          <Image
+                    source={require("../../../assets/puffleOrange.png")}
+                    style={[
+                      styles.imageParticipantCard1
+                      
+                    ]}
+                  />
+          <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+          </View>
+          </View>
+          </View>
+  )
+   :
     eventoFinalizado  ? (
       <View>
         <Text>Combates finalizados, aguarde o resultado!</Text>

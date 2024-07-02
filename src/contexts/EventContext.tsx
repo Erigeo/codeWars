@@ -10,6 +10,7 @@ interface UserEventContextType {
   playerDetails: any[];
   Renderize: boolean;
   eventoFinalizado: boolean;
+  setEventPlayers: (players: Player[]) => void;
 
   handleClick: () => void;
   finalizarEvent: (id: string) => Promise<void>;
@@ -137,7 +138,8 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
       playerDetails,
       getAvailablePairings,
       eventoFinalizado,
-      finalizarEvent
+      finalizarEvent,
+      setEventPlayers
     }}>
       {children}
     </UserEventContext.Provider>

@@ -13,7 +13,7 @@ export default function Perfil() {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Ionicons name="person-circle" size={100} color="black" />
         {dataUser ? (
@@ -36,7 +36,7 @@ export default function Perfil() {
         <Text style={styles.sectionTitle}>Sobre</Text>
         <Text style={styles.sectionContent}>Lorem ipsum dolor sit amet...</Text>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1e1e1e',
+   
   },
   headerImage: {
     width: '100%',
@@ -52,7 +53,6 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     alignItems: 'center',
-    marginTop: -50,
     paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: '#2e2e2e',

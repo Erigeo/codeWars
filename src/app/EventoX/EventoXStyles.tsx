@@ -248,6 +248,41 @@ export default StyleSheet.create({
   titleButtonFinishRound: {
     color: '#fff'
   },
+  titleEventoFinalizado: {
+    color: '#fff',
+    fontSize: 20,
+  },
+  containerEventoFinalizado: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5
+  },
+  cardChamp: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  cardChampTitle: {
+     
+  },
+  titleChamp: {
+    color: '#fff',
+    fontSize: 20,
+
+
+  },
+  imageParticipantCard1: {
+    marginTop: 10,
+    borderRadius: 100,
+    width: 75,
+    height: 75,
+    backgroundColor: 'white',
+
+  },
+  cardChampAjuste: {
+    flexDirection: 'row',
+    marginTop: 10,
+    gap: 5
+  }
 
 
   
