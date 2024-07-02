@@ -3,12 +3,17 @@ import { Text, TextInput, View, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar } from 'react-native-paper';
 import { signIn } from '../../services/Auth';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import {jwtDecode, JwtPayload} from 'jwt-decode';
 import { Link } from 'expo-router';
 import "core-js/stable/atob";
 import { getUserData } from '../../services/PlayerService';
 import { Player } from '../../interfaces/User';
 import styles from './LoginStyles'; // Importando os estilos
+
+interface CustomJwtPayload extends JwtPayload {
+  id: string;
+  role: string; // Adicione outras propriedades conforme necessário
+}
 
 export default function Login({ onSuccess }) {
   const [email, setEmail] = useState('');
@@ -18,38 +23,39 @@ export default function Login({ onSuccess }) {
 
   const onDismissSnackBar = () => setVisible(false);
 
-
-interface CustomJwtPayload extends JwtPayload {
-  id: string;
-  role: string; // Adicione outras propriedades conforme necessário
-}
-
   async function handleLogin() {
     try {
+      console.log('Attempting to log in with email:', email, 'and password:', password);
       const resultado = await signIn(email, password);
-      const token = resultado // Acesse o token diretamente da resposta
-      console.log(token);
-  
+      console.log('SignIn result:', resultado);
+
+      const token = resultado; // Access the token directly from the response
+      console.log('Token:', token);
+
       if (token) {
-        await AsyncStorage.setItem('token', token); // Armazene o token sem JSON.stringify
-  
-        const decodeToken = jwtDecode<CustomJwtPayload>(token);
-        console.log(decodeToken);
-        const userId = decodeToken.id;
-        const userRole = decodeToken.role;
-        console.log(userRole)
+        await AsyncStorage.setItem('token', token); // Store the token without JSON.stringify
+
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        console.log('Decoded Token:', decodedToken);
+
+        const userId = decodedToken.id;
+        const userRole = decodedToken.role;
+        console.log('UserId:', userId);
+        console.log('UserRole:', userRole);
+
         await AsyncStorage.setItem('userId', userId);
         await AsyncStorage.setItem('userRole', userRole);
-  
+
         onSuccess();
+      } else {
+        console.log('No token received');
+        setVisible(true);
       }
     } catch (e) {
-      console.log(e);
+      console.log('Error during login:', e);
       setVisible(true);
     }
   }
-
-
 
   return (
     <View style={styles.container}>

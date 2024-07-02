@@ -1,8 +1,8 @@
-import { useEffect, useState, useContext, createContext } from 'react';
-import { Manager, Player } from '../interfaces/User';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserDataManager } from '../services/ManagerService';
 import { getUserData } from '../services/PlayerService';
+import { Manager, Player } from '../interfaces/User';
 
 interface UserContextType {
   dataUser: Player | null;
@@ -14,7 +14,11 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+interface UserProviderProps {
+  children: ReactNode;
+}
+
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [dataUser, setDataUser] = useState<Player | null>(null);
   const [dataManager, setDataManager] = useState<Manager | null>(null);
   const [Renderize, setRenderize] = useState(false);
@@ -43,6 +47,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    collectData();
+  }, []);
 
   return (
     <UserContext.Provider value={{ dataUser, dataManager, collectData, Renderize, handleClick }}>
