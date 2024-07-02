@@ -9,12 +9,13 @@ import 'react-native-get-random-values';
 import { useUserData } from '../../contexts/AuthContext';
 import { MultiSelect } from 'react-native-element-dropdown';
 import {  router, useLocalSearchParams } from 'expo-router'
+import { useUserEventData } from '../../contexts/EventContext';
 
 
 
 export default function RegisterEvent() {
   const [dados, setDados] = useState({} as any);
-  const {collectData, handleClick} = useUserData();
+  const { handleClick} = useUserEventData()
   const [selected, setSelected] = useState([]);
   const data = [
     { label: 'One piece', value: 'One piece' },
