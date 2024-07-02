@@ -4,7 +4,7 @@ export default StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '80%'
+    width: '80%',
   },
   title: {
     fontSize: 30,
@@ -26,6 +26,9 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     marginBottom: 10,
+  },
+  buttonPressed: {
+    backgroundColor: '#125348', // Change to the color you want when the button is pressed
   },
   buttonText: {
     color: '#364753',
