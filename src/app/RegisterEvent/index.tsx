@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput } from 'react-native'
 import React, { useState } from 'react'
-import { Link } from 'expo-router'
+
 import { v4 as uuidv4 } from 'uuid';
 import { createEvent } from '../../services/ManagerService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,7 @@ import styles from './RegisterEventStyles';
 import 'react-native-get-random-values';
 import { useUserData } from '../../contexts/AuthContext';
 import { MultiSelect } from 'react-native-element-dropdown';
+import {  router, useLocalSearchParams } from 'expo-router'
 
 
 
@@ -49,6 +50,7 @@ function atualizarDados(id: string, valor: string){
        
       })
       handleClick()
+      router.back()
       
       }catch(e){
         console.log(e)

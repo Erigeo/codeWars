@@ -22,7 +22,7 @@ const { width: screenWidth } = Dimensions.get('window');
 
 
 export default function Home() {
-  const { dataUser, collectData, dataManager,  } = useUserData();
+  const { dataUser, collectData, dataManager  } = useUserData();
   const [events, setEvents] = useState([]);
   const [playerEvents, setPlayerEvents] = useState([]);
   const [playerId, setPlayerId] = useState('');
@@ -31,7 +31,7 @@ export default function Home() {
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null); // Referência para timeout do scroll automático
   const {
-    handleClick,
+    handleClick, Renderize
   } = useUserEventData();
   const carouselImages = [
     require('../../../../assets/banner_1.jpg'),
@@ -55,7 +55,7 @@ export default function Home() {
     };
 
     initializeData();
-  }, []); // Executa apenas uma vez no início
+  }, [Renderize]); // Executa apenas uma vez no início
 
   // Use os dados quando estiverem prontos
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [dataUser, playerId, loading]); // Adiciona loading, dataUser e playerId como dependências
+  }, [ Renderize]); // Adiciona loading, dataUser e playerId como dependências
 
   // TODO stop doing this
   const fetchEvents = async () => {
