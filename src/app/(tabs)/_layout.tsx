@@ -2,6 +2,9 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { Entypo } from '@expo/vector-icons';
 import { UserProvider } from '../../contexts/AuthContext';
+import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function _layout() {
   return (
@@ -16,6 +19,9 @@ export default function _layout() {
           headerTitle: "EVENTOS",
           headerTitleAlign: 'left',
           tabBarLabel: 'eventos',
+          tabBarIcon: ({ color, size }) => (
+            <AntDesign name="Trophy" size={24} color="white" />
+          ),
           headerStyle: {
             backgroundColor: '#3D5D75'
           },
@@ -27,6 +33,8 @@ export default function _layout() {
         <Tabs.Screen name="Decks/index" options={{
           headerTitle: "DECKS",
           tabBarLabel: 'decks',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="cards" size={24} color="white" />),
           headerTitleAlign: 'left',
           headerStyle: {
             backgroundColor: '#3D5D75'
@@ -54,6 +62,9 @@ export default function _layout() {
         <Tabs.Screen name="Ranking/index" options={{
           headerTitle: "RANKING",
           tabBarLabel: 'ranking',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="podium-outline" size={24} color="white" />
+          ),
           headerTitleAlign: 'left',
           headerStyle: {
             backgroundColor: '#3D5D75'
@@ -66,6 +77,9 @@ export default function _layout() {
         <Tabs.Screen name="Perfil/index" options={{
           headerTitle: "PERFIL",
           tabBarLabel: 'perfil',
+          tabBarIcon: ({ color, size }) => (
+            <AntDesign name="user" size={24} color="white" />
+          ),
           headerTitleAlign: 'left',
           headerStyle: {
             backgroundColor: '#3D5D75'
