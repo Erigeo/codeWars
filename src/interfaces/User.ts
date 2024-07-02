@@ -59,6 +59,7 @@ export interface Events {
 
 
 
+
 export interface Pairing {
     playerOneId: string;
     playerTwoId: string;
@@ -69,15 +70,16 @@ export interface EventResult {
     id: string;
     eventId: string;
     playersResult: PlayerResult[];
-}
-
-export interface PlayerResult{
+  }
+  
+  export interface PlayerResult {
     playerId: string;
     eventPoints: number;
     winrate: number;
-    opponentsIds: string[];
-    deckId: string;
-}
+    opponentIds: string[];
+    deckId: string | null;
+  }
+  
 
 export interface Deck {
     id: string;

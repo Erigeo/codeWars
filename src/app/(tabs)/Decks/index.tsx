@@ -135,9 +135,9 @@ export default function Decks() {
         numberOfLines={4}
       />
       {deckId ? (
-        <Button title="Delete Deck" onPress={handleDeleteDeck} />
+        <Button  title="Delete Deck" onPress={handleDeleteDeck} />
       ) : (
-        <Button title="Register Deck" onPress={handleRegisterDeck} />
+        <Button  title="Register Deck" onPress={handleRegisterDeck} />
       )}
 
       <Text style={styles.title}>Current Deck</Text>
@@ -159,16 +159,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+   backgroundColor: '#2D3841'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#fff'
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#DAE2E9',
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -188,4 +189,9 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     margin: 5,
   },
+  buttonPad: {
+    backgroundColor: 'white',
+    width: '60%',
+    height: 30
+  }
 });

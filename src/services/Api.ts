@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getBaseURL = () => {
   if (Platform.OS === 'android' || Platform.OS === 'ios') {
-    return 'http://192.168.0.58:8080/cardwars/'; // Use your notebook's local IP address
+    return 'http://192.168.1.133:8080/cardwars/'; // Use your notebook's local IP address
   } else {
     return 'http://localhost:8080/cardwars/'; // Default to localhost for other platforms
   }

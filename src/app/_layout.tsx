@@ -12,10 +12,11 @@ export default function _layout() {
         <UserEventProvider>
         <Stack
     screenOptions={{
-        // headerStyle: {
-        //     backgroundColor: 'black'
-        // },
-        // headerTintColor: 'white'
+        
+        headerStyle: {
+            backgroundColor: '#3D5D75'
+        },
+         headerTintColor: '#DAE2E9'
     }}
    >
         <Stack.Screen name="index" options={{
@@ -36,12 +37,12 @@ export default function _layout() {
             
         }} />
         <Stack.Screen name="RegisterEvent/index" options={{
-            title: 'teste',
+            title: 'Registrar',
             headerShown: true
             
         }} />
         <Stack.Screen name="EventoX/index" options={{
-            title: 'teste1',
+            title: 'Evento',
             headerShown: true
             
         }} />
