@@ -14,7 +14,7 @@ const Page: React.FC = () => {
   }
 
   useEffect(() => {
-    //AsyncStorage.removeItem('token'); // Comente para funcionar a persistência de login
+    AsyncStorage.removeItem('token'); // Comente para funcionar a persistência de login
     async function verifyLogin() {
       try {
         const token = await AsyncStorage.getItem('token');

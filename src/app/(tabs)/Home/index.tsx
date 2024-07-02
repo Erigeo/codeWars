@@ -221,7 +221,7 @@ export default function Home() {
                       </View>
                       <View style={styles.cardEventDate}>
                         <Fontisto name="date" size={24} color="#4ECB71" />
-                        <Text style={styles.titleEventDate}>{item.date}</Text>
+                        <Text style={styles.titleEventDate}>{item.date == (undefined || null) ? 'A definir' : item.date}</Text>
                       </View>
                     </View>
                     <Pressable style={styles.buttonSeeEvent} onPress={() => {handlePress(item.id, dataManager.role, dataManager.id), handleClick}}>
