@@ -16,7 +16,7 @@ import { finalizeRound, savePairings, startEvent } from '../../services/ManagerS
 // TODO ver isso aí da grade
 // TODO update uando renderizar corretament
 // TODO iniciado = finalizado qnd for finalizado
-// TODO qnd abrir os evntos ja abrir em detalhes
+// TODO qnd abrir os evntos ja abrir em detalhes 
 // TODO nome dos players maiores
 // TODO evento finaliazdo = mudar cor (esta preto)
 export default function EventoX() {
@@ -30,7 +30,7 @@ export default function EventoX() {
     availablePairings,
     getAvailablePairings,
     playerDetails,
-    fetchPlayerDetails,
+    fetchPlayerDetails, 
     eventoFinalizado,
     finalizarEvent
   } = useUserEventData();
@@ -162,7 +162,7 @@ export default function EventoX() {
           </View>
           <View style={styles.cardEventDate}>
             <Fontisto name="date" size={24} color="#4ECB71" />
-            <Text style={styles.titleEventDate}>{event.date}</Text>
+            <Text style={styles.titleEventDate}>{event.date == (undefined || null) ? 'A definir' : event.date}</Text>
           </View>
         </View>
 

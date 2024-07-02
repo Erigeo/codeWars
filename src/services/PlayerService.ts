@@ -47,8 +47,16 @@ export async function getEventById(id: string) {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(resultado)
-    // TODO undefined??? console.log("no of participants:" + resultado.data.numberOfParticipants)
+
+    // TODO tratamento temp
+    if (resultado.data.date == undefined || resultado.data.date == null) {
+      resultado.data.date = "A definir"
+      console.log("date do resultado : ", resultado.data.date) 
+    }
+    if (resultado.data.location == undefined || resultado.data.date == null) {
+      resultado.data.location = "A definir"
+    }
+
     return resultado.data;
   } catch (e) {
     console.log(e);
@@ -65,6 +73,16 @@ export async function getEventsByPlayerId(playerId: string) {
       }
     });
     console.log(resultado.data)
+
+    // TODO tratamento temp
+    if (resultado.data.date == undefined || resultado.data.date == null) {
+      resultado.data.date = "A definir"
+      console.log("date do resultado : ", resultado.data.date) 
+    }
+    if (resultado.data.location == undefined || resultado.data.date == null) {
+      resultado.data.location = "A definir"
+    }
+
     return resultado.data;
   } catch (e) {
     console.log(e);
@@ -76,6 +94,14 @@ export async function createEvent(Evento: Events) {
   if (!Evento) return null;
   try {
     const token = await AsyncStorage.getItem('token');
+
+    // TODO tratamento temp
+    if (Evento.date == undefined || Evento.date == null) {
+      Evento.date = "A definir"
+    }
+    if (Evento.location == undefined || Evento.date == null) {
+      Evento.location = "A definir"
+    }
 
     const resultado = await Api.post('api/events/createEvent', Evento, {
       headers: {

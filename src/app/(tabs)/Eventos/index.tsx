@@ -5,10 +5,12 @@ import { router } from 'expo-router';
 import { useUserData } from '../../../contexts/AuthContext';
 import Api from '../../../services/Api';  // Usando a configuração do Api personalizada
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { Fontisto } from '@expo/vector-icons';
 
 export default function Eventos() {
     const { dataUser, collectData } = useUserData(); 
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState([]);   
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
 
@@ -29,7 +31,7 @@ export default function Eventos() {
             console.log(token)
             const response = await Api.get(`api/events/`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}` 
                 }
             });
             setEvents(response.data);
@@ -75,18 +77,39 @@ export default function Eventos() {
         return filteredEvents;
     };
 
+    // TODO temp treatment of event data ; fix
     const renderEventCard = ({ item }) => (
         <Pressable style={styles.eventCard} onPress={() => handlePress(item.id)}>
-            <Image style={styles.image} source={{ uri: item.imagePath }} />
-            <View style={styles.cardContent}>
-                <Text style={styles.eventTitle}>{item.name}</Text>
+        <Image style={styles.image} source={{ uri: item.imagePath }} />
+        <View style={styles.cardContent}>
+            <Text style={styles.eventTitle}>{item.name}</Text>
+
+            <View style={styles.infoRow}>
+                {/* Localização e Data em uma linha */}
+                <View style={styles.infoGroup}>
+                    <Ionicons name="location" size={20} color="#EC3657" />
+                    <Text style={styles.locationInfo}>{item.location == (undefined || null) ? 'A definir' : item.location}</Text>
+                </View>
+                <View style={styles.infoGroup}>
+                    <Fontisto name="date" size={20} color="#4ECB71" />
+                    <Text style={styles.dateInfo}>{item.date == (undefined || null) ? 'A definir' : item.date}</Text>
+                </View>
+            </View>
+
+            <View style={styles.infoRow}>
+                {/* Número de Participantes e Tags em outra linha */}
+                <View style={styles.infoGroup}>
+                    <Ionicons name="people" size={20} color="#9747FF" />
+                    <Text style={styles.peopleInfo}>{item.playerIds.length} / {item.numberOfParticipants}</Text>
+                </View>
                 <View style={styles.tagsContainer}>
-                    {item.tags && item.tags.slice(0, 2).map((tag, index) => (
-                        <Text key={index} style={styles.tag}>{tag}</Text>
+                    {item.tags && item.tags.slice(0, 3).map((tag, index) => (
+                        <Text key={index} style={[styles.tag, styles[`tag${index + 1}`]]}>{tag}</Text>
                     ))}
                 </View>
             </View>
-        </Pressable>
+        </View>
+    </Pressable>
     );
 
  return (
@@ -127,7 +150,6 @@ export default function Eventos() {
                 renderItem={renderEventCard}
                 keyExtractor={item => item.id}
                 contentContainerStyle={styles.flatListContent}
-                numColumns={2}
                 showsVerticalScrollIndicator={false}
             />
         )}
@@ -152,23 +174,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
     },
-    tagFilterContainer: {
-        marginLeft: 10,
-        marginBottom: 10,
-    },
-    tagButton: {
-        backgroundColor: '#364753',
-        padding: 10,
-        borderRadius: 15,
-        marginRight: 10,
-    },
-    selectedTag: {
-        backgroundColor: '#FF6347',
-    },
-    tagButtonText: {
-        color: '#FFFFFF',
-        fontSize: 14,
-    },
     noEventsContainer: {
         borderRadius: 15,
         backgroundColor: '#364753',
@@ -183,53 +188,99 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
     },
-    findEventsButton: {
-        backgroundColor: 'blue',
-        padding: 10,
-        alignItems: 'center',
-        borderRadius: 15,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-    },
     flatListContent: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 10,  
     },
     eventCard: {
-        flex: 1,
+        flexDirection: 'row',     // imagem + conteúdo em row
         backgroundColor: '#364753',
         borderRadius: 15,
-        margin: 5,
-        padding: 10,
+        marginVertical: 8,       
+        padding: 10,             
         alignItems: 'center',
         justifyContent: 'center',
-        width: '45%',
+        width: '100%',           
     },
     image: {
-        width: '100%',
-        height: 100,
+        width: '35%',            
+        height: 120,
         borderRadius: 15,
     },
     cardContent: {
-        marginTop: 10,
-        alignItems: 'center',
+        flex: 1,              
+        marginLeft: 16,           // margem entre a imagem e o restante
+        justifyContent: 'center', 
     },
     eventTitle: {
         color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
+        marginBottom: 8,
     },
     tagsContainer: {
         flexDirection: 'row',
+        flexWrap: 'wrap',    
         marginTop: 5,
     },
     tag: {
         backgroundColor: '#FF6347',
         color: '#FFFFFF',
-        padding: 5,
+        padding: 4,
         borderRadius: 5,
         marginRight: 5,
-        fontSize: 12,
+        fontSize: 11,
+    },
+    eventLocation: {
+        fontSize: 14,
+        color: '#888',
+        marginTop: 4,
+    },
+    eventDate: {
+        fontSize: 14,
+        color: '#888',
+        marginTop: 4,
+    },
+    infoRow: {
+        flexDirection: 'row',  
+        justifyContent: 'space-between', 
+        alignItems: 'center',  
+        marginBottom: 8,
+    },
+    eventInfo: {
+        fontSize: 14,
+        color: '#888',          
+        marginLeft: 4,
+    },
+    dateInfo: {
+        fontSize: 14,
+        color: '#4ECB71',          
+        marginLeft: 4,
+    },
+    locationInfo: {
+        fontSize: 14,
+        color: '#EC3657',          
+        marginLeft: 4,
+    },
+    peopleInfo: {
+        fontSize: 14,
+        color: '#9747FF',          
+        marginLeft: 4,
+    },
+    infoGroup: {
+        flexDirection: 'row',   // Organizando ícone + texto em row
+        alignItems: 'center',   
+        marginRight: 16,
+    },
+    tag1: {
+        backgroundColor: '#A25FCA', 
+        color: '#FFFFFF',          
+    },
+    tag2: {
+        backgroundColor: '#5FCA77',
+        color: '#FFFFFF',        
+    },
+    tag3: {
+        backgroundColor: '#3D69DA',
+        color: '#FFFFFF',          
     },
 });
