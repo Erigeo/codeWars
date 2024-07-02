@@ -41,13 +41,13 @@ export default function Home() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        await collectData(); // Supondo que collectData inicializa dataUser
+        await collectData();
         const playerIdFromStorage = await AsyncStorage.getItem('userId');
         setPlayerId(playerIdFromStorage);
-        setLoading(false); // Concluímos a inicialização
+        setLoading(false);
       } catch (error) {
         console.error("Erro ao inicializar os dados:", error);
-        setLoading(false); // Concluímos mesmo com erro 
+        setLoading(false);
       }
     };
 
@@ -205,28 +205,41 @@ export default function Home() {
           <View style={styles.myeventsContainer}>
             <FlatList
               data={dataManager.events}
-              style={{ maxHeight: '80%' }}
+              style={{ maxHeight: '100%' , minWidth: '100%' }}
               renderItem={({ item }) => (
-                <View style={styles.myevents}>
-                  <Image style={styles.imageContainer} source={{ uri: `${item.imagePath}` }}></Image>
-                  <View style={styles.titleContainer}>
-                    <Text style={styles.titleEventName}>{item.name}</Text>
-                    <View style={styles.infoCardsContainer}>
-                      <View style={styles.cardPlayersNumber}>
-                        <Ionicons name="people" size={28} color="#9747FF" />
-                        <Text style={styles.titlePlayersNumber}>{item.playerIds.length} / {item.numberOfParticipants}</Text>
+                <Pressable style={styles.eventCard} onPress={() => handlePress(item.id, dataManager.role, dataManager.id)}>
+                  <Image style={styles.image} source={{ uri: item.imagePath }} />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.eventTitle}>{item.name}</Text>
+
+                    <View style={styles.infoRow}>
+                      {/* Localização e Data em uma linha */}
+                      <View style={styles.infoGroup}>
+                        <Ionicons name="location" size={20} color="#EC3657" />
+                        <Text style={styles.locationInfo}>{item.location == (undefined || null) ? 'A definir' : item.location}</Text>
                       </View>
-                      <View style={styles.cardEventDate}>
-                        <Fontisto name="date" size={24} color="#4ECB71" />
-                        <Text style={styles.titleEventDate}>{item.date}</Text>
+                      <View style={styles.infoGroup}>
+                        <Fontisto name="date" size={20} color="#4ECB71" />
+                        <Text style={styles.dateInfo}>{item.date == (undefined || null) ? 'A definir' : item.date}</Text>
+                      </View>
+                    </View> 
+
+                    <View style={styles.infoRow}>
+                      {/* Número de Participantes e Tags em outra linha */}
+                      <View style={styles.infoGroup}>
+                        <Ionicons name="people" size={20} color="#9747FF" />
+                        <Text style={styles.peopleInfo}>{item.playerIds.length} / {item.numberOfParticipants}</Text>
+                      </View>
+                      <View style={styles.tagsContainer}>
+                        {item.tags && item.tags.slice(0, 3).map((tag, index) => (
+                          <Text key={index} style={[styles.tag, styles[`tag${index + 1}`]]}>{tag}</Text>
+                        ))}
                       </View>
                     </View>
-                    <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id, dataManager.role, dataManager.id)}>
-                      <Text style={styles.buttonMyEventText1}>Visualizar evento</Text>
-                    </Pressable>
                   </View>
-                </View>
-              )}
+                </Pressable>
+              )
+              }
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
             />

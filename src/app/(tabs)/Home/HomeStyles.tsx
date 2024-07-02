@@ -287,7 +287,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
+    width: '100%', // Ajuste a largura conforme necessário, '100%' para ocupar a largura total disponível
   },
   image: {
     width: '35%',
