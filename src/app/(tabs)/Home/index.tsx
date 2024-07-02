@@ -214,11 +214,11 @@ export default function Home() {
                     <View style={styles.infoCardsContainer}>
                       <View style={styles.cardPlayersNumber}>
                         <Ionicons name="people" size={28} color="#9747FF" />
-                        <Text style={styles.titlePlayersNumber}>35</Text>
+                        <Text style={styles.titlePlayersNumber}>{item.numberOfParticipants}</Text>
                       </View>
                       <View style={styles.cardEventDate}>
                         <Fontisto name="date" size={24} color="#4ECB71" />
-                        <Text style={styles.titleEventDate}>02/05/24</Text>
+                        <Text style={styles.titleEventDate}>{item.date}</Text>
                       </View>
                     </View>
                     <Pressable style={styles.buttonSeeEvent} onPress={() => handlePress(item.id, dataManager.role, dataManager.id)}>
@@ -298,8 +298,8 @@ export default function Home() {
                   </View>
                 )}
                 keyExtractor={item => item.id}
-                showsVerticalScrollIndicator={false} // Para esconder a barra de rolagem vertical, se necessário
-                contentContainerStyle={{ paddingBottom: 20 }} // Adicione um padding na parte inferior para evitar cortes
+                showsVerticalScrollIndicator={false} // Para esconder a barra de rolagem vertical
+                contentContainerStyle={{ paddingBottom: 20 }} // Padding na parte inferior pra evitar cortar a parte de baixo do último evento
               />
             </View>
           </View>
