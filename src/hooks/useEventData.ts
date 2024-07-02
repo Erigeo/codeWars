@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { fetchUserRole, getToken, getUserId} from '../services/StorageService';
-import { checkUserIsSubscribedToEvent, getEventById, subscribeUserToEvent } from '../services/PlayerService';
+import { checkEventFull, checkUserIsSubscribedToEvent, getEventById, subscribeUserToEvent } from '../services/PlayerService';
 
 import { Alert } from 'react-native';
 
 export function useEventData(event) {
   const [userRole, setUserRole] = useState('');
   const [isUserSubscribed, setIsUserSubscribed] = useState(false);
+  const [isEventoFull, setIsEventoFull] = useState(false);
+  
   const id = event.id;
 
   useEffect(() => {
@@ -22,8 +24,13 @@ export function useEventData(event) {
           const userId = await getUserId();
 
           const subscribed = await checkUserIsSubscribedToEvent(userId, event);
+
           console.log("subscibred? " + subscribed) 
           setIsUserSubscribed(subscribed);
+
+          const eventFull = await checkEventFull(event);
+          setIsEventoFull(eventFull);
+          
         }
       } catch (error) {
         console.error('Erro ao carregar dados do evento:', error);
@@ -53,5 +60,5 @@ export function useEventData(event) {
     }
   };
 
-  return { userRole, isUserSubscribed, handleInscricao };
+  return { userRole, isUserSubscribed, handleInscricao, isEventoFull };
 }

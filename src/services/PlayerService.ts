@@ -5,15 +5,15 @@ import Api from "./Api";
 
 
 
-export async function signUpPlayer(user: Player){
-  if(!user) return null;
+export async function signUpPlayer(user: Player) {
+  if (!user) return null;
   //console.log(user.password)
   try {
     const resultado = await Api.post('api/users/register/player', user)
     //console.log('aquii')
     return resultado.data
   }
-  catch(error){
+  catch (error) {
     console.log(error)
     return null
   }
@@ -23,13 +23,13 @@ export async function signUpPlayer(user: Player){
 
 export async function getUserData(id: string) {
   try {
-    const token = await AsyncStorage.getItem('token'); 
+    const token = await AsyncStorage.getItem('token');
     const resultado = await Api.get('api/players/' + id, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-   //console.log(resultado.data)
+    //console.log(resultado.data)
 
     return resultado.data;
   } catch (e) {
@@ -75,7 +75,7 @@ export async function getEventsByPlayerId(playerId: string) {
 export async function createEvent(Evento: Events) {
   if (!Evento) return null;
   try {
-    const token = await AsyncStorage.getItem('token'); 
+    const token = await AsyncStorage.getItem('token');
 
     const resultado = await Api.post('api/events/createEvent', Evento, {
       headers: {
@@ -89,18 +89,18 @@ export async function createEvent(Evento: Events) {
 }
 
 //export async function createEtapa(Etapa: Etapas){
-  //if(!Etapa) return null;
-  //try{
-    //const resultado = await Api.post('/etapas', Etapa)
-    //console.log(resultado.data)
-  //}catch(e){
-    //console.log(e)
-    //return null
-  //}
+//if(!Etapa) return null;
+//try{
+//const resultado = await Api.post('/etapas', Etapa)
+//console.log(resultado.data)
+//}catch(e){
+//console.log(e)
+//return null
+//}
 //}
 
 
-export async function verifyEventsByID(userId: String ){
+export async function verifyEventsByID(userId: String) {
 
 }
 
@@ -124,4 +124,15 @@ export async function subscribeUserToEvent(userId: string, eventId: string, toke
   });
 }
 
+
+export async function checkEventFull(event: any) {
+  try {
+    //console.log("valor de evenot? " + event.isFull)
+    if (event.isFull == undefined) return (event.numberOfParticipants <= event.playerIds.length)
+    return event.isFull;
+  }
+  catch (e) {
+    console.log("Erro ao tentar verificar se evento está cheio:", e)
+  }
+}
 

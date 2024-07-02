@@ -214,7 +214,7 @@ export default function Home() {
                     <View style={styles.infoCardsContainer}>
                       <View style={styles.cardPlayersNumber}>
                         <Ionicons name="people" size={28} color="#9747FF" />
-                        <Text style={styles.titlePlayersNumber}>{item.numberOfParticipants}</Text>
+                        <Text style={styles.titlePlayersNumber}>{item.playerIds.length} / {item.numberOfParticipants}</Text>
                       </View>
                       <View style={styles.cardEventDate}>
                         <Fontisto name="date" size={24} color="#4ECB71" />
@@ -284,7 +284,7 @@ export default function Home() {
                       <View style={styles.infoCardsContainer}>
                         <View style={styles.cardPlayersNumber}>
                           <Ionicons name="people" size={28} color="#9747FF" />
-                          <Text style={styles.titlePlayersNumber}>{item.numberOfParticipants}</Text>
+                          <Text style={styles.titlePlayersNumber}>{item.playerIds.length} / {item.numberOfParticipants}</Text>
                         </View>
                         <View style={styles.cardEventDate}>
                           <Fontisto name="date" size={24} color="#4ECB71" />

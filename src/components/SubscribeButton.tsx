@@ -6,9 +6,11 @@ interface SubscribeButtonProps {
   isUserSubscribed: boolean;
   isLoading: boolean;
   eventHasStarted: boolean;
+  isEventoFull: boolean,
   handleInscricao: () => void;
   startEventX: () => void;
 }
+
 
 // Definindo o componente SubscribeButton
 const SubscribeButton: React.FC<SubscribeButtonProps> = ({
@@ -16,26 +18,33 @@ const SubscribeButton: React.FC<SubscribeButtonProps> = ({
   isUserSubscribed,
   isLoading,
   eventHasStarted,
+  isEventoFull,
   handleInscricao,
   startEventX
 }) => {
+  //console.log("(SBCRBTTN) is evento full" + isEventoFull);
+
   return (
     <Pressable
-      style={[styles.buttonSeeEvent, isUserSubscribed && styles.disabledButton]}
+      style={[styles.buttonSeeEvent, styles.disabledButton]}
+      disabled={
+        isLoading || (userRole === 'ROLE_PLAYER' && (isEventoFull || isUserSubscribed))
+      }
       onPress={() => {
         if (userRole === 'ROLE_MANAGER' && !eventHasStarted) {
-            startEventX();
-          } 
-         else if (userRole === 'ROLE_PLAYER' && !isUserSubscribed) {
+          startEventX();
+        }
+        else if (userRole === 'ROLE_PLAYER' && !isUserSubscribed) {
           handleInscricao(); // Inscrever-se
         }
       }}
-      disabled={isLoading} // Desabilita o botão enquanto estiver carregando
+      
+
     >
       <Text style={styles.buttonMyEventText1}>
-        {isLoading ? 'Carregando...' : 
-          userRole === 'ROLE_MANAGER' ? (eventHasStarted ? 'Iniciado' : 'Iniciar Evento') : 
-          (isUserSubscribed ? 'Inscrito' : 'Inscrever-se')}
+        {isLoading ? 'Carregando...' :
+          userRole === 'ROLE_MANAGER' ? (eventHasStarted ? 'Iniciado' : 'Iniciar Evento') :
+            (isUserSubscribed ? 'Inscrito' : isEventoFull ? 'Cheio' : 'Inscrever-se')}
       </Text>
     </Pressable>
   );

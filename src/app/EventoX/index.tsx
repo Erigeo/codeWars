@@ -12,8 +12,7 @@ import styles from './EventoXStyles';
 import { Feather } from '@expo/vector-icons';
 import { finalizeRound, savePairings, startEvent } from '../../services/ManagerService';
 
-// TODO consertar os dados mockados de evento (participantes + data)
-// TODO visao de usuario: tirar os icones + tudo que não pertença a ele
+// TODO visao de usuario: tirar os icones + tudo que não pertença a ele - FEITO?
 // TODO ver isso aí da grade
 // TODO update uando renderizar corretament
 // TODO iniciado = finalizado qnd for finalizado
@@ -38,7 +37,7 @@ export default function EventoX() {
   const [selectedButton, setSelectedButton] = useState(null);
   const { id, role } = useLocalSearchParams();
   const [pairings, setPairings] = useState([]);
-  const { userRole, isUserSubscribed, handleInscricao } = useEventData(event);
+  const { userRole, isUserSubscribed, handleInscricao, isEventoFull } = useEventData(event);
   const [isLoading, setIsLoading] = useState(true);
   
 
@@ -171,6 +170,7 @@ export default function EventoX() {
             userRole={userRole}
             isUserSubscribed={isUserSubscribed}
             isLoading={isLoading}
+            isEventoFull={isEventoFull}
             handleInscricao={handleInscricao} eventHasStarted={event.hasStarted} startEventX={startEventX}        />
 
       </View>

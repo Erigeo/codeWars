@@ -53,6 +53,7 @@ export interface Events {
     currentRound?: number;
     hasStarted?: boolean;
     finished?: boolean;
+    isFull: boolean;
     pairings?: Pairing[];
 }
 
