@@ -173,10 +173,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+    borderRadius: 10
   },
   textArea: {
     height: 80, // Adjust the height as needed
     textAlignVertical: 'top', // Align text to the top
+    borderRadius: 10
   },
   cardContainer: {
     flex: 1,
