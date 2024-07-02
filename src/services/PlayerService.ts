@@ -47,7 +47,24 @@ export async function getEventById(id: string) {
         Authorization: `Bearer ${token}`
       }
     });
-   // console.log(resultado.data)
+    console.log(resultado)
+    // TODO undefined??? console.log("no of participants:" + resultado.data.numberOfParticipants)
+    return resultado.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+export async function getEventsByPlayerId(playerId: string) {
+  try {
+    const token = await AsyncStorage.getItem('token'); // Obtém o token armazenado
+    const resultado = await Api.get('api/players/' + playerId + '/events', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(resultado.data)
     return resultado.data;
   } catch (e) {
     console.log(e);
@@ -85,6 +102,26 @@ export async function createEvent(Evento: Events) {
 
 export async function verifyEventsByID(userId: String ){
 
+}
+
+export async function checkUserIsSubscribedToEvent(userId: string, event: any) {
+  try {
+    const playerIsInEvent = event.playerIds.includes(userId);
+    console.log("player is in event?" + playerIsInEvent)
+    return playerIsInEvent;
+  } catch (error) {
+    console.error('Erro ao verificar inscrição do usuário:', error);
+    return false;
+  }
+}
+
+export async function subscribeUserToEvent(userId: string, eventId: string, token: string) {
+  return await Api.put(`api/players/${userId}/events/add`, eventId, {
+    headers: {
+      'Content-Type': 'text/plain',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
 }
 
 

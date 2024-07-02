@@ -1,7 +1,7 @@
 import Api from "./Api"
 
 export async function signIn(email: string, password: string) {
-    if(!email || !password) return null
+    if(!email || !password) throw Error("Bad request")
     try{
         const resultado = await Api.post('auth/login', {
             email, password
@@ -11,6 +11,6 @@ export async function signIn(email: string, password: string) {
     }catch(e){
         console.log(e)
         console.log('falhou ein')
-        return null
+        throw e;
     }
 }

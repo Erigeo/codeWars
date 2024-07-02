@@ -42,10 +42,10 @@ export interface Events {
     managerId: string;
     name: string;
     location: string;
-    numberOfParticipants?: number;
+    numberOfParticipants: number;
     playerIds?: string[],
     imagePath?: string;
-    date?: Date;
+    date?: string;
     description?: string; //
     rules?: string; //
     tags?: string[]; //

@@ -1,22 +1,32 @@
-import { View, StyleSheet, Text, Pressable, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, Pressable, FlatList, TouchableOpacity, Alert} from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
+import { useUserData } from "../../contexts/AuthContext";
 import { useLocalSearchParams } from 'expo-router';
 import { useUserEventData } from "../../contexts/EventContext";
-import { Feather } from '@expo/vector-icons';
+import SubscribeButton from '../../components/SubscribeButton';
+import { useEventData } from '../../hooks/useEventData';
 import styles from './EventoXStyles';
+import { Feather } from '@expo/vector-icons';
 import { finalizeRound, savePairings, startEvent } from '../../services/ManagerService';
 
+// TODO consertar os dados mockados de evento (participantes + data)
+// TODO visao de usuario: tirar os icones + tudo que não pertença a ele
+// TODO ver isso aí da grade
+// TODO update uando renderizar corretament
+// TODO iniciado = finalizado qnd for finalizado
+// TODO qnd abrir os evntos ja abrir em detalhes
+// TODO nome dos players maiores
+// TODO evento finaliazdo = mudar cor (esta preto)
 export default function EventoX() {
-  //const { dataUser, collectData, Renderize, dataManager} = useUserData();
+  const { dataUser, collectData, Renderize} = useUserData();
   const {
     event,
     collectEventDataById,
     eventPlayers,
     collectPlayersDataByEventId,
-    Renderize,
     handleClick,
     availablePairings,
     getAvailablePairings,
@@ -27,9 +37,14 @@ export default function EventoX() {
   } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
   const { id, role } = useLocalSearchParams();
-
-  const [isPressed, setIsPressed] = useState(false);
   const [pairings, setPairings] = useState([]);
+  const { userRole, isUserSubscribed, handleInscricao } = useEventData(event);
+  const [isLoading, setIsLoading] = useState(true);
+  
+
+  const handleButtonPress = (buttonIndex) => {
+    setSelectedButton(buttonIndex);
+  };
 
   const handlePressUser = (index, player) => {
     setPairings((prev) => {
@@ -53,14 +68,6 @@ export default function EventoX() {
     });
   };
 
-
-
-
-
-  const handleButtonPress = (buttonIndex) => {
-    setSelectedButton(buttonIndex);
-  };
-
   async function finishRound(){
     try{
       const resultado = await savePairings(pairings, id as string)
@@ -73,7 +80,52 @@ export default function EventoX() {
     }finally{
       //setPairings([]);
     }
+  }  
+
+// TODO check modularização
+ /* useEffect(() => {
+    console.log("evento" + event.id)
+    console.log("evento no" + event.numberOfParticipants)
+    if (id) {
+      collectEventDataById(id as string)
+        .then(() => setIsLoading(false)) // Evento carregado
+        .catch((error) => {
+          console.error('Erro ao carregar dados do evento:', error);
+          setIsLoading(false);
+        });
+    }
+
+  }, [id, Renderize]); // executa apenas quando id mudar */
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(false);
+      collectEventDataById(id as string);
+      collectPlayersDataByEventId(event);
+      if(event.hasStarted && event.finished==false){
+        getAvailablePairings(event);
+        console.log(eventoFinalizado)
+      if(eventoFinalizado == false){
+      setPairings(playerDetails.map(detail => ({
+        playerOneId: detail.playerOneId,
+        playerTwoId: detail.playerTwoId,
+        result: -1
+      })));
+    }
+    }
   }
+  }, [id, Renderize]);
+
+
+
+
+  // TODO aqui mesmo?
+  if (isLoading) {
+    return <View style={styles.mainContainer}>
+      </View>;
+  }
+
+
 
   async function startEventX() {
     try {
@@ -94,64 +146,49 @@ export default function EventoX() {
     }
   }
 
-  useEffect(() => {
 
-
-    if (id) {
-      collectEventDataById(id as string);
-      collectPlayersDataByEventId(event);
-      if(event.hasStarted && event.finished==false){
-        getAvailablePairings(event);
-        console.log(eventoFinalizado)
-      if(eventoFinalizado == false){
-      setPairings(playerDetails.map(detail => ({
-        playerOneId: detail.playerOneId,
-        playerTwoId: detail.playerTwoId,
-        result: -1
-      })));
-    }
-    }
-  }
-  }, [id, Renderize]);
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.myevents}>
-        <Image style={styles.imageContainer} source={require("../../../assets/teste.webp")} />
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleEventName}>{event.name}</Text>
-          <View style={styles.infoCardsContainer}>
-            <View style={styles.cardPlayersNumber}>
-              <Ionicons name="people" size={28} color="#9747FF" />
-              <Text style={styles.titlePlayersNumber}>{eventPlayers.length}</Text>
-            </View>
-            <View style={styles.cardEventDate}>
-              <Fontisto name="date" size={24} color="#4ECB71" />
-              <Text style={styles.titleEventDate}>02/05/24</Text>
-            </View>
+    <View style={styles.myevents}>
+      <Image style={styles.imageContainer} source={event.imagePath}></Image>
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleEventName}>{event.name}</Text>
+
+        <View style={styles.infoCardsContainer}>
+          <View style={styles.cardPlayersNumber}>
+            <Ionicons name="people" size={28} color="#9747FF" />
+            <Text style={styles.titlePlayersNumber}>{eventPlayers.length}</Text>
           </View>
-          {event.hasStarted == false ?(
-          <Pressable style={styles.buttonSeeEvent} onPress={() => startEventX()}>
-            <Text style={styles.buttonMyEventText1}>Iniciar Evento</Text>
-          </Pressable>
-          ) :  <Pressable style={styles.buttonSeeEvent} onPress={() => startEventX()}>
-          <Text style={styles.buttonMyEventText1}>Iniciado</Text>
-        </Pressable>}
+          <View style={styles.cardEventDate}>
+            <Fontisto name="date" size={24} color="#4ECB71" />
+            <Text style={styles.titleEventDate}>{event.date}</Text>
+          </View>
         </View>
+
+        <SubscribeButton
+            userRole={userRole}
+            isUserSubscribed={isUserSubscribed}
+            isLoading={isLoading}
+            handleInscricao={handleInscricao} eventHasStarted={event.hasStarted} startEventX={startEventX}        />
+
       </View>
 
+    </View>
+
       <View style={styles.navbarcontainer}>
-        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(1); handleClick(); }}>
+        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(1)}>
           <Text style={[selectedButton === 1 && styles.selectedText]}>Detalhes</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(2); handleClick(); }}>
+        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(2)}>
           <Text style={[selectedButton === 2 && styles.selectedText]}>Torneio</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(3); handleClick(); }}>
+        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(3)}>
           <Text style={[selectedButton === 3 && styles.selectedText]}>Rodada</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(4); handleClick(); }}>
-          <Text style={[selectedButton === 4 && styles.selectedText]}>Gerenciar</Text>
+        <Pressable style={styles.navbarButtons} onPress={() => handleButtonPress(4)}>
+          <Text style={[selectedButton === 4 && styles.selectedText]}>Grade</Text>
         </Pressable>
       </View>
 
@@ -159,17 +196,17 @@ export default function EventoX() {
         <View>
           <View style={styles.textdetailscontainer}>
             <Text style={styles.TextTitleDetalhes}>Detalhes</Text>
-            <Feather name="edit" size={20} color="gray" />
+            {userRole === 'ROLE_MANAGER' && <Feather name="edit" size={20} color="gray" />}
           </View>
           <Text style={styles.TextDetails}>{event.description}</Text>
           <View style={styles.textdetailscontainer}>
             <Text style={styles.TextTitleDetalhes}>Cronograma</Text>
-            <Feather name="edit" size={20} color="gray" />
+            {userRole === 'ROLE_MANAGER' && <Feather name="edit" size={20} color="gray" />}
           </View>
           <Text style={styles.TextDetails}>{event.description}</Text>
           <View style={styles.textdetailscontainer}>
             <Text style={styles.TextTitleDetalhes}>Premiação</Text>
-            <Feather name="edit" size={20} color="gray" />
+            {userRole === 'ROLE_MANAGER' && <Feather name="edit" size={20} color="gray" />}
           </View>
           <Text style={styles.TextDetails}>{event.description}</Text>
         </View>
@@ -310,7 +347,7 @@ export default function EventoX() {
     </View>
   )
 
-    :  (
+    :   event.hasStarted == true  ? (
       <View>
         <View style={styles.flatListContainer}>
           <FlatList
@@ -379,13 +416,9 @@ export default function EventoX() {
             scrollEnabled={false}
           />
         </View>
-        <View style={styles.positionButtonFinishRound}>
-          <Pressable style={styles.buttonFinishRound} onPress={finishRound}>
-            <Text style={styles.titleButtonFinishRound}>Finalizar Round</Text>
-          </Pressable>
-        </View>
+
       </View>
-    )}
+    ) : null}
   </View>
 )}
 
@@ -418,8 +451,8 @@ export default function EventoX() {
   </View>
 )}
 
-      
+</View>
 
-    </View>
+  
   );
 }
