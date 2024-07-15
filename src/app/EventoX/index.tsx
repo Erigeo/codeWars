@@ -39,6 +39,8 @@ export default function EventoX() {
     eventoFinalizado,
     finalizarEvent,
     Renderize,
+    handleClickBattle,
+    RenderizeBattle,
     setEventPlayers
   } = useUserEventData();
   const [selectedButton, setSelectedButton] = useState(null);
@@ -128,6 +130,34 @@ export default function EventoX() {
     }
   }
   }, [id, Renderize]);
+
+
+
+  useEffect(() => {
+    if (id) {
+      setEventPlayers([])
+      setIsLoading(false);
+      collectEventDataById(id as string);
+      collectPlayersDataByEventId(event);
+      if(event.hasStarted && event.finished==false){
+        getAvailablePairings(event);
+        console.log(eventoFinalizado)
+      if(eventoFinalizado == false){
+      setPairings(playerDetails.map(detail => ({
+        playerOneId: detail.playerOneId,
+        playerTwoId: detail.playerTwoId,
+        result: -1
+      })));
+    }
+    }
+    if(eventoFinalizado){
+      eventResults();
+    }
+  }
+  }, [RenderizeBattle]);
+
+
+
 
 
 
@@ -231,16 +261,16 @@ export default function EventoX() {
     </View>
 
       <View style={styles.navbarcontainer}>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(1); handleClick();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(1); handleClickBattle();}}>
           <Text style={[selectedButton === 1 && styles.selectedText]}>Detalhes</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(2); handleClick();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(2); handleClickBattle();}}>
           <Text style={[selectedButton === 2 && styles.selectedText]}>Torneio</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(3); handleClick();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(3); handleClickBattle();}}>
           <Text style={[selectedButton === 3 && styles.selectedText]}>Rodada</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(4); handleClick();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(4); handleClickBattle();}}>
           <Text style={[selectedButton === 4 && styles.selectedText]}>Grade</Text>
         </Pressable>
       </View>
@@ -296,7 +326,7 @@ export default function EventoX() {
         </View>
       )}
 
-{selectedButton === 3 && role === "ROLE_MANAGER" &&(
+{ selectedButton === 3 && role === "ROLE_MANAGER" &&(
   <View>
     <Text style={styles.TextTitleDetalhes}>Rodada</Text>
     {eventoFinalizado && event.finished ? (
@@ -504,7 +534,7 @@ export default function EventoX() {
               return (
                 <View style={styles.myParticipantsPairing}>
                   <TouchableOpacity
-                    onPress={() => handlePressUser(index, 0)}
+                    onPress={() => {handlePressUser(index, 0); handleClickBattle();}}
                     style={styles.cardPairing}
                   >
                     <Image
@@ -527,7 +557,7 @@ export default function EventoX() {
                   </TouchableOpacity>
                   <Text style={styles.vsTitle}> VS </Text>
                   <TouchableOpacity
-                    onPress={() => handlePressUser(index, 1)}
+                    onPress={() => {handlePressUser(index, 1); handleClickBattle();}}
                     style={styles.cardPairing}
                   >
                     <Text

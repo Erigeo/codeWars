@@ -9,9 +9,10 @@ interface UserEventContextType {
   availablePairings: Pairing[];
   playerDetails: any[];
   Renderize: boolean;
+  RenderizeBattle: boolean;
   eventoFinalizado: boolean;
   setEventPlayers: (players: Player[]) => void;
-
+  handleClickBattle: () => void;
   handleClick: () => void;
   finalizarEvent: (id: string) => Promise<void>;
   collectEventDataById: (id: string) => Promise<void>;
@@ -25,6 +26,7 @@ const UserEventContext = createContext<UserEventContextType | undefined>(undefin
 export const UserEventProvider = ({ children }: { children: ReactNode }) => {
   const [event, setEvent] = useState<Events>({} as Events);
   const [Renderize, setRenderize] = useState(false);
+  const [RenderizeBattle, setRenderizeBattle] = useState(false);
   const [eventPlayers, setEventPlayers] = useState<Player[]>([]);
   const [availablePairings, setAvailablePairings] = useState<Pairing[]>([]);
   const [playerDetails, setPlayerDetails] = useState<any[]>([]);
@@ -32,6 +34,10 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
 
   const handleClick = () => {
     setRenderize(prevRenderize => !prevRenderize); // Alternar entre true e false
+  };
+
+  const handleClickBattle = () => {
+    setRenderizeBattle(prevRenderizeBattle => !prevRenderizeBattle); // Alternar entre true e false
   };
   
 
@@ -139,7 +145,9 @@ export const UserEventProvider = ({ children }: { children: ReactNode }) => {
       getAvailablePairings,
       eventoFinalizado,
       finalizarEvent,
-      setEventPlayers
+      setEventPlayers,
+      handleClickBattle,
+      RenderizeBattle
     }}>
       {children}
     </UserEventContext.Provider>
