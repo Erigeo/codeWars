@@ -22,14 +22,12 @@ const SubscribeButton: React.FC<SubscribeButtonProps> = ({
   handleInscricao,
   startEventX
 }) => {
+  const isDisabled = isLoading || (userRole === 'ROLE_PLAYER' && (isEventoFull || isUserSubscribed));
   //console.log("(SBCRBTTN) is evento full" + isEventoFull);
 
   return (
     <Pressable
-      style={[styles.buttonSeeEvent, styles.disabledButton]}
-      disabled={
-        isLoading || (userRole === 'ROLE_PLAYER' && (isEventoFull || isUserSubscribed))
-      }
+      style={[styles.buttonSeeEvent, isDisabled && styles.disabledButton]}
       onPress={() => {
         if (userRole === 'ROLE_MANAGER' && !eventHasStarted) {
           startEventX();
@@ -38,7 +36,7 @@ const SubscribeButton: React.FC<SubscribeButtonProps> = ({
           handleInscricao(); // Inscrever-se
         }
       }}
-      
+      disabled={isDisabled}
 
     >
       <Text style={styles.buttonMyEventText1}>
