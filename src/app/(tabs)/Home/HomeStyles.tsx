@@ -107,9 +107,24 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
+    //borderColor: 'green',
+    //borderWidth: 2
+  },
+  buttonSeeEvent1: {
+    flex: 1,
+    backgroundColor: '#364753',
+    width: '80%',
+    flexDirection: 'row',
+    margin: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
     borderColor: 'green',
     borderWidth: 2
-  },
+  }
+  
+  
+  ,
 
 
   buttonMyEventText1: {
