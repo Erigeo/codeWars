@@ -206,6 +206,14 @@ export default function Home() {
 
         {dataManager && dataManager.role === "ROLE_MANAGER" && dataManager.events.length >= 1 ? (
           <View style={styles.myeventsContainer}>
+              <View style={styles.buttonCreateContainer}>
+              <Link href={"RegisterEvent"} asChild>
+                <Pressable style={styles.buttonCreateEvents}>
+                  <Text style={styles.buttonMyEventText}>Criar evento</Text>
+                </Pressable>
+              </Link>
+            </View>
+
             <FlatList
               data={dataManager.events}
               style={{ maxHeight: '80%' }}
@@ -233,13 +241,7 @@ export default function Home() {
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
             />
-            <View style={styles.buttonCreateContainer}>
-              <Link href={"RegisterEvent"} asChild>
-                <Pressable style={styles.buttonCreateEvents}>
-                  <Text style={styles.buttonMyEventText}>Criar evento</Text>
-                </Pressable>
-              </Link>
-            </View>
+            
           </View>
         ) : null}
 
