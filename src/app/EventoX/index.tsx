@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Pressable, FlatList, TouchableOpacity, Alert} from "react-native";
+import { View, StyleSheet, Text, Pressable, FlatList, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -12,7 +12,7 @@ import styles from './EventoXStyles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { finalizeRound, resultEvent, savePairings, startEvent } from '../../services/ManagerService';
+import { finalizeRound, finishEvent, resultEvent, savePairings, startEvent } from '../../services/ManagerService';
 import { EventResult, Player, PlayerResult } from "../../interfaces/User";
 import { getUserData } from "../../services/PlayerService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // TODO nome dos players maiores
 // TODO evento finaliazdo = mudar cor (esta preto)
 export default function EventoX() {
-  const {dataUser} = useUserData();
+  const { dataUser } = useUserData();
   const {
     event,
     collectEventDataById,
@@ -35,7 +35,7 @@ export default function EventoX() {
     availablePairings,
     getAvailablePairings,
     playerDetails,
-    fetchPlayerDetails, 
+    fetchPlayerDetails,
     eventoFinalizado,
     finalizarEvent,
     Renderize,
@@ -58,107 +58,98 @@ export default function EventoX() {
   };
 
   const handlePressUser = (index, player) => {
-    console.log("sou chamado?")
     setPairings((prev) => {
-     
+
       if (index < 0 || index >= prev.length) {
-        return prev; 
+        console.log("sou chamado?")
+        return prev;
       }
-  
-      
+
+
       const newPairings = [...prev];
-  
-      
+
+
       if (newPairings[index]) {
+        console.log("sou chamado 2?")
         newPairings[index].result = player;
       } else {
-        
+
         console.error(`Index ${index} is out of bounds or item is undefined.`);
       }
-  
+
       return newPairings;
     });
   };
 
-  async function finishRound(){
-    try{
+  async function finishRound() {
+    try {
       const resultado = await savePairings(pairings, id as string)
-      
+
       if (resultado) {
         console.log('salvo no sistema resultado do round')
       }
-    }catch(e){
+    } catch (e) {
       console.log(e)
-    }finally{
+    } finally {
       //setPairings([]);
     }
-  }  
+  }
 
-// TODO check modularização
- /* useEffect(() => {
-    console.log("evento" + event.id)
-    console.log("evento no" + event.numberOfParticipants)
+  // TODO check modularização
+  /* useEffect(() => {
+     console.log("evento" + event.id)
+     console.log("evento no" + event.numberOfParticipants)
+     if (id) {
+       collectEventDataById(id as string)
+         .then(() => setIsLoading(false)) // Evento carregado
+         .catch((error) => {
+           console.error('Erro ao carregar dados do evento:', error);
+           setIsLoading(false);
+         });
+     }
+ 
+   }, [id, Renderize]); // executa apenas quando id mudar */
+
+   useEffect(() => {
     if (id) {
+      setEventPlayers([]);
+      setIsLoading(false);
       collectEventDataById(id as string)
-        .then(() => setIsLoading(false)) // Evento carregado
+        .then(() => {
+          return collectPlayersDataByEventId(event);
+        })
+        .then(() => {
+          if (event.hasStarted && !event.finished) {
+            getAvailablePairings(event);
+            if (!eventoFinalizado) {
+              setPairings(playerDetails.map(detail => ({
+                playerOneId: detail.playerOneId,
+                playerTwoId: detail.playerTwoId,
+                result: -1
+              })));
+            }
+          }
+          if (eventoFinalizado) {
+            eventResults();
+          }
+        })
         .catch((error) => {
           console.error('Erro ao carregar dados do evento:', error);
           setIsLoading(false);
         });
     }
+  }, [id, Renderize, RenderizeBattle]);
 
-  }, [id, Renderize]); // executa apenas quando id mudar */
 
   useEffect(() => {
-    if (id) {
-      setEventPlayers([])
-      setIsLoading(false);
-      collectEventDataById(id as string);
-      collectPlayersDataByEventId(event);
-      if(event.hasStarted && event.finished==false){
-        getAvailablePairings(event);
-        console.log(eventoFinalizado)
-      if(eventoFinalizado == false){
+    if (playerDetails.length > 0 && !eventoFinalizado && event.hasStarted && !event.finished) {
       setPairings(playerDetails.map(detail => ({
         playerOneId: detail.playerOneId,
         playerTwoId: detail.playerTwoId,
         result: -1
       })));
     }
-    }
-    if(eventoFinalizado){
-      eventResults();
-    }
-  }
-  }, [id, Renderize]);
-
-
-
-  useEffect(() => {
-    if (id) {
-      setEventPlayers([])
-      setIsLoading(false);
-      collectEventDataById(id as string);
-      collectPlayersDataByEventId(event);
-      if(event.hasStarted && event.finished==false){
-        getAvailablePairings(event);
-        console.log(eventoFinalizado)
-      if(eventoFinalizado == false){
-      setPairings(playerDetails.map(detail => ({
-        playerOneId: detail.playerOneId,
-        playerTwoId: detail.playerTwoId,
-        result: -1
-      })));
-    }
-    }
-    if(eventoFinalizado){
-      eventResults();
-    }
-  }
-  }, [RenderizeBattle]);
-
-
-
+  }, [playerDetails]);
 
 
 
@@ -166,24 +157,24 @@ export default function EventoX() {
   // TODO aqui mesmo?
   if (isLoading) {
     return <View style={styles.mainContainer}>
-      </View>;
+    </View>;
   }
 
-   // Altere `any` para o tipo específico de `EventResult`, se possível
+  // Altere `any` para o tipo específico de `EventResult`, se possível
 
-   async function eventResults() {
+  async function eventResults() {
     try {
       const result = await resultEvent(id as string); // Supondo que 'id' está definido em algum lugar
       if (result) {
-        setEventResult(result); 
+        setEventResult(result);
         await eventResultChampion(result); // Passar o objeto PlayerResult diretamente
       }
     } catch (e) {
       console.log('Erro ao processar resultados do evento:', e);
     }
   }
-  
-  
+
+
   async function eventResultChampion(playersResult: PlayerResult[]) {
     try {
       if (playersResult && playersResult.length > 0) {
@@ -191,7 +182,7 @@ export default function EventoX() {
           // Verifica se prev é undefined (primeira iteração) ou se current tem mais pontos que prev
           return (!prev || current.eventPoints > prev.eventPoints) ? current : prev;
         });
-  
+
         console.log('Jogador campeão encontrado:', championPlayer); // Verifica o campeão encontrado
         console.log(championPlayer.playerId)
         const resultado = await getUserData(championPlayer.playerId)
@@ -203,20 +194,20 @@ export default function EventoX() {
       console.log('Erro ao determinar o campeão do evento:', e);
     }
   }
-  
 
-  
-  
-  
+
+
+
+
 
 
   async function startEventX() {
     try {
-      if(event.playerIds.length === 0){
+      if (event.playerIds.length === 0) {
         console.log("Para inciar um evento é necessário existir Players inscritos.")
         return null;
       }
-      if(event.playerIds.length < 2){
+      if (event.playerIds.length < 2) {
         console.log("Para iniciar um evento de maneira correta é necessário no mínimo 2 jogadores")
         return null
       }
@@ -233,45 +224,45 @@ export default function EventoX() {
 
   return (
     <View style={styles.mainContainer}>
-    <View style={styles.myevents}>
-      <Image style={styles.imageContainer} source={event.imagePath}></Image>
+      <View style={styles.myevents}>
+        <Image style={styles.imageContainer} source={event.imagePath}></Image>
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleEventName}>{event.name}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleEventName}>{event.name}</Text>
 
-        <View style={styles.infoCardsContainer}>
-          <View style={styles.cardPlayersNumber}>
-            <Ionicons name="people" size={28} color="#9747FF" />
-            <Text style={styles.titlePlayersNumber}>{event?.playerIds?.length ?? 0}</Text>
+          <View style={styles.infoCardsContainer}>
+            <View style={styles.cardPlayersNumber}>
+              <Ionicons name="people" size={28} color="#9747FF" />
+              <Text style={styles.titlePlayersNumber}>{event?.playerIds?.length ?? 0}</Text>
+            </View>
+            <View style={styles.cardEventDate}>
+              <Fontisto name="date" size={24} color="#4ECB71" />
+              <Text style={styles.titleEventDate}>{event.date == (undefined || null) ? 'A definir' : event.date}</Text>
+            </View>
           </View>
-          <View style={styles.cardEventDate}>
-            <Fontisto name="date" size={24} color="#4ECB71" />
-            <Text style={styles.titleEventDate}>{event.date == (undefined || null) ? 'A definir' : event.date}</Text>
-          </View>
-        </View>
 
-        <SubscribeButton
+          <SubscribeButton
             userRole={userRole}
             isUserSubscribed={isUserSubscribed}
             isLoading={isLoading}
             isEventoFull={isEventoFull}
-            handleInscricao={handleInscricao} eventHasStarted={event.hasStarted} startEventX={startEventX}        />
+            handleInscricao={handleInscricao} eventHasStarted={event.hasStarted} startEventX={startEventX} />
+
+        </View>
 
       </View>
 
-    </View>
-
       <View style={styles.navbarcontainer}>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(1); handleClickBattle();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(1); handleClickBattle(); }}>
           <Text style={[selectedButton === 1 && styles.selectedText]}>Detalhes</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(2); handleClickBattle();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(2); handleClickBattle(); }}>
           <Text style={[selectedButton === 2 && styles.selectedText]}>Torneio</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(3); handleClickBattle();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(3); handleClickBattle(); }}>
           <Text style={[selectedButton === 3 && styles.selectedText]}>Rodada</Text>
         </Pressable>
-        <Pressable style={styles.navbarButtons} onPress={() => {handleButtonPress(4); handleClickBattle();}}>
+        <Pressable style={styles.navbarButtons} onPress={() => { handleButtonPress(4); handleClickBattle(); }}>
           <Text style={[selectedButton === 4 && styles.selectedText]}>Grade</Text>
         </Pressable>
       </View>
@@ -303,335 +294,335 @@ export default function EventoX() {
             <Text style={styles.TextTitleTorneio}>Torneio</Text>
           </View>
           <View style={styles.flatListContainer}>
-      <Text style={styles.titleParticipants}>Participantes</Text>
-      {event.playerIds.length === 0 ? (
-        <Text >Nenhum participante</Text>
-      ) : (
-        <FlatList
-          data={eventPlayers}
-          style={styles.flatList}
-          renderItem={({ item }) => (
-            <View style={styles.myParticipants}>
-              <Image
-                source={require("../../../assets/puffleOrange.png")}
-                style={styles.imageParticipant}
+            <Text style={styles.titleParticipants}>Participantes</Text>
+            {event.playerIds.length === 0 ? (
+              <Text >Nenhum participante</Text>
+            ) : (
+              <FlatList
+                data={eventPlayers}
+                style={styles.flatList}
+                renderItem={({ item }) => (
+                  <View style={styles.myParticipants}>
+                    <Image
+                      source={require("../../../assets/puffleOrange.png")}
+                      style={styles.imageParticipant}
+                    />
+                    <Text>{item.name}</Text>
+                  </View>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                showsHorizontalScrollIndicator={false}
               />
-              <Text>{item.name}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-        />
-      )}
-    </View>
+            )}
+          </View>
         </View>
       )}
 
-{ selectedButton === 3 && role === "ROLE_MANAGER" &&(
-  <View>
-    <Text style={styles.TextTitleDetalhes}>Rodada</Text>
-    {eventoFinalizado && event.finished ? (
-      <View style={styles.containerEventoFinalizado}>
-        <View style={styles.cardChampTitle}>
-        <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
-        <View style={styles.cardChampAjuste}>
-          <Text  style={styles.titleEventoFinalizado}> Parabéns!</Text>
-          <Entypo name="trophy" size={24} color="gold" />
-          <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+      {selectedButton === 3 && role === "ROLE_MANAGER" && (
+        <View>
+          <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+          {eventoFinalizado && event.finished ? (
+            <View style={styles.containerEventoFinalizado}>
+              <View style={styles.cardChampTitle}>
+                <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+                <View style={styles.cardChampAjuste}>
+                  <Text style={styles.titleEventoFinalizado}> Parabéns!</Text>
+                  <Entypo name="trophy" size={24} color="gold" />
+                  <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+                </View>
+              </View>
+              {championPlayer ? (
+                <View style={styles.cardChamp}>
+                  <Image
+                    source={require("../../../assets/puffleOrange.png")}
+                    style={[
+                      styles.imageParticipantCard1
+
+                    ]}
+                  />
+                  <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+                </View>
+              ) : (
+                <Text>Campeão não definido</Text>
+              )}
+            </View>
+          ) :
+            eventoFinalizado ? (
+              <View>
+                <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
+                <View style={styles.positionButtonFinishRound}>
+                  <Pressable style={styles.buttonFinishRound} onPress={() => { finalizarEvent(id as string); eventResults(); handleClickBattle(); }}>
+                    <Text style={styles.titleButtonFinishRound}>Finalizar Evento</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )
+              :
+              event.hasStarted == false ? (
+                <View>
+                  <Text>Inicie Evento para gerar pairings</Text>
+                </View>
+              )
+
+                : (
+                  <View>
+                    <View style={styles.flatListContainer}>
+                      <FlatList
+                        data={playerDetails}
+                        style={styles.flatList}
+                        renderItem={({ item, index }) => {
+                          if (!item || !item.playerOne || !item.playerTwo) return null;
+                          const pairing = pairings[index];
+                          return (
+                            <View style={styles.myParticipantsPairing}>
+                              <TouchableOpacity
+
+                                onPress={() => { handlePressUser(index, 0) }}
+                                style={styles.cardPairing}
+                              >
+                                <Image
+                                  source={require("../../../assets/puffleOrange.png")}
+                                  style={[
+                                    styles.imageParticipantCard,
+                                    pairing?.result === 0 && styles.imagePressed,
+                                  ]}
+                                />
+                                <Text
+                                  style={[
+                                    styles.nameTitle,
+                                    pairing?.result === 0 && styles.titlePressed,
+                                  ]}
+                                  numberOfLines={1}
+                                  ellipsizeMode="tail"
+                                >
+                                  {item.playerOne.name}
+                                </Text>
+                              </TouchableOpacity>
+                              <Text style={styles.vsTitle}> VS </Text>
+                              <TouchableOpacity
+                                onPress={() => handlePressUser(index, 1)}
+                                style={styles.cardPairing}
+                              >
+                                <Text
+                                  style={[
+                                    styles.nameTitle,
+                                    pairing?.result === 1 && styles.titlePressed,
+                                  ]}
+                                  numberOfLines={1}
+                                  ellipsizeMode="tail"
+                                >
+                                  {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
+                                </Text>
+                                <Image
+                                  source={require("../../../assets/puffleBlue.png")}
+                                  style={[
+                                    styles.imageParticipantCard,
+                                    pairing?.result === 1 && styles.imagePressed,
+                                  ]}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          );
+                        }}
+                        keyExtractor={(item, index) => {
+                          if (!item || !item.playerOneId || !item.playerTwoId) {
+                            return `default-key-${index}`;
+                          }
+                          return `${item.playerOneId}-${item.playerTwoId}`;
+                        }}
+                        showsHorizontalScrollIndicator={false}
+                        scrollEnabled={false}
+                      />
+                    </View>
+                    <View style={styles.positionButtonFinishRound}>
+                      <Pressable style={styles.buttonFinishRound} onPress={finishRound}>
+                        <Text style={styles.titleButtonFinishRound}>Finalizar Round</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                )}
         </View>
-        </View>
-        {championPlayer ? (
-          <View style={styles.cardChamp}>
-            <Image
+      )}
+
+
+
+      {selectedButton === 3 && role === "ROLE_PLAYER" && (
+        <View>
+          <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+          {eventoFinalizado && event.finished ? (
+            <View style={styles.containerEventoFinalizado}>
+              <View style={styles.cardChampTitle}>
+                <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+                <View style={styles.cardChampAjuste}>
+                  <Text style={styles.titleEventoFinalizado}> Parabéns!</Text>
+                  <Entypo name="trophy" size={24} color="gold" />
+                  <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+                </View>
+              </View>
+              {championPlayer ? (
+                <View style={styles.cardChamp}>
+                  <Image
+                    source={require("../../../assets/puffleOrange.png")}
+                    style={[
+                      styles.imageParticipantCard1
+
+                    ]}
+                  />
+                  <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+                </View>
+              ) : (
+                <Text>Campeão não definido</Text>
+              )}
+            </View>
+          ) :
+            eventoFinalizado && event.finished && dataUser.id === championPlayer.id ? (
+              <View>
+                <Text style={styles.TextTitleDetalhes}>Rodada</Text>
+
+                <View style={styles.containerEventoFinalizado}>
+                  <View style={styles.cardChampTitle}>
+                    <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
+                    <View style={styles.cardChampAjuste}>
+                      <Text style={styles.titleEventoFinalizado}> Parabéns! você venceu!</Text>
+                      <Entypo name="trophy" size={24} color="gold" />
+                      <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
+                    </View>
+                  </View>
+
+                  <View style={styles.cardChamp}>
+                    <Image
                       source={require("../../../assets/puffleOrange.png")}
                       style={[
                         styles.imageParticipantCard1
-                        
-                      ]}
-                    />
-            <Text style={styles.titleChamp}>{championPlayer.name}</Text>
-            </View>
-    ) : (
-      <Text>Campeão não definido</Text>
-    )}
-      </View>
-    ) :
-    eventoFinalizado  ? (
-      <View>
-        <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
-        <View style={styles.positionButtonFinishRound}>
-          <Pressable style={styles.buttonFinishRound} onPress={() => {finalizarEvent(id as string); eventResults(); handleClickBattle();}}>
-            <Text style={styles.titleButtonFinishRound}>Finalizar Evento</Text>
-          </Pressable>
-        </View>
-      </View>
-    )
-   :
-  event.hasStarted == false  ? (
-    <View>
-      <Text>Inicie Evento para gerar pairings</Text>
-    </View>
-  )
 
-    :  (
-      <View>
-        <View style={styles.flatListContainer}>
-          <FlatList
-            data={playerDetails}
-            style={styles.flatList}
-            renderItem={({ item, index }) => {
-              if (!item || !item.playerOne || !item.playerTwo) return null;
-              const pairing = pairings[index];
-              return (
-                <View style={styles.myParticipantsPairing}>
-                  <TouchableOpacity
-                  
-                    onPress={() => {handlePressUser(index, 0)}}
-                    style={styles.cardPairing}
-                  >
-                    <Image
-                      source={require("../../../assets/puffleOrange.png")}
-                      style={[
-                        styles.imageParticipantCard,
-                        pairing?.result === 0 && styles.imagePressed,
                       ]}
                     />
-                    <Text
-                      style={[
-                        styles.nameTitle,
-                        pairing?.result === 0 && styles.titlePressed,
-                      ]}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.playerOne.name}
-                    </Text>
-                  </TouchableOpacity>
-                  <Text style={styles.vsTitle}> VS </Text>
-                  <TouchableOpacity
-                    onPress={() => handlePressUser(index, 1)}
-                    style={styles.cardPairing}
-                  >
-                    <Text
-                      style={[
-                        styles.nameTitle,
-                        pairing?.result === 1 && styles.titlePressed,
-                      ]}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
-                    </Text>
-                    <Image
-                      source={require("../../../assets/puffleBlue.png")}
-                      style={[
-                        styles.imageParticipantCard,
-                        pairing?.result === 1 && styles.imagePressed,
-                      ]}
-                    />
-                  </TouchableOpacity>
+                    <Text style={styles.titleChamp}>{championPlayer.name}</Text>
+                  </View>
                 </View>
-              );
-            }}
-            keyExtractor={(item, index) => {
-              if (!item || !item.playerOneId || !item.playerTwoId) {
-                return `default-key-${index}`;
-              }
-              return `${item.playerOneId}-${item.playerTwoId}`;
-            }}
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
-          />
-        </View>
-        <View style={styles.positionButtonFinishRound}>
-          <Pressable style={styles.buttonFinishRound} onPress={finishRound}>
-            <Text style={styles.titleButtonFinishRound}>Finalizar Round</Text>
-          </Pressable>
-        </View>
-      </View>
-    )}
-  </View>
-)}
-
-
-
-{selectedButton === 3 && role === "ROLE_PLAYER" &&(
-  <View>
-  <Text style={styles.TextTitleDetalhes}>Rodada</Text>
-  {eventoFinalizado && event.finished ? (
-    <View style={styles.containerEventoFinalizado}>
-      <View style={styles.cardChampTitle}>
-      <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
-      <View style={styles.cardChampAjuste}>
-        <Text  style={styles.titleEventoFinalizado}> Parabéns!</Text>
-        <Entypo name="trophy" size={24} color="gold" />
-        <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
-      </View>
-      </View>
-      {championPlayer ? (
-        <View style={styles.cardChamp}>
-          <Image
-                    source={require("../../../assets/puffleOrange.png")}
-                    style={[
-                      styles.imageParticipantCard1
-                      
-                    ]}
-                  />
-          <Text style={styles.titleChamp}>{championPlayer.name}</Text>
-          </View>
-  ) : (
-    <Text>Campeão não definido</Text>
-  )}
-    </View>
-  ): 
-  eventoFinalizado && event.finished &&  dataUser.id === championPlayer.id ?(
-    <View>
-        <Text style={styles.TextTitleDetalhes}>Rodada</Text>
-  
-         <View style={styles.containerEventoFinalizado}>
-          <View style={styles.cardChampTitle}>
-          <Text style={styles.titleEventoFinalizado}>Evento Finalizado!</Text>
-          <View style={styles.cardChampAjuste}>
-           <Text  style={styles.titleEventoFinalizado}> Parabéns! você venceu!</Text>
-          <Entypo name="trophy" size={24} color="gold" />
-          <MaterialCommunityIcons name="party-popper" size={24} color="pink" />
-      </View>
-      </View>
-      
-        <View style={styles.cardChamp}>
-          <Image
-                    source={require("../../../assets/puffleOrange.png")}
-                    style={[
-                      styles.imageParticipantCard1
-                      
-                    ]}
-                  />
-          <Text style={styles.titleChamp}>{championPlayer.name}</Text>
-          </View>
-          </View>
-          </View>
-  )
-   :
-    eventoFinalizado  ? (
-      <View>
-        <Text>Combates finalizados, aguarde o resultado!</Text>
-      </View>
-    )
-   :
-  event.hasStarted == false  ? (
-    <View>
-      <Text>Aguarde a formatação de pairings!</Text>
-    </View>
-  )
-
-    :   event.hasStarted == true  ? (
-      <View>
-        <View style={styles.flatListContainer}>
-          <FlatList
-            data={playerDetails}
-            style={styles.flatList}
-            
-            renderItem={({ item, index }) => {
-              if (!item || !item.playerOne || !item.playerTwo) return null;
-              const pairing = pairings[index];
-              return (
-                <View style={styles.myParticipantsPairing}>
-                  <TouchableOpacity
-                  
-                    onPress={() => { console.log('TouchableOpacity pressed');handleClickBattle(); handlePressUser(index, 0);}}
-                    style={styles.cardPairing}
-                  >
-                    <Image
-                      source={require("../../../assets/puffleOrange.png")}
-                      style={[
-                        styles.imageParticipantCard,
-                        pairing?.result === 0 && styles.imagePressed,
-                      ]}
-                    />
-                    <Text
-                      style={[
-                        styles.nameTitle,
-                        pairing?.result === 0 && styles.titlePressed,
-                      ]}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.playerOne.name}
-                    </Text>
-                  </TouchableOpacity>
-                  <Text style={styles.vsTitle}> VS </Text>
-                  <TouchableOpacity
-                    onPress={() => { handleClickBattle(); handlePressUser(index, 1);}}
-                    style={styles.cardPairing}
-                  >
-                    <Text
-                      style={[
-                        styles.nameTitle,
-                        pairing?.result === 1 && styles.titlePressed,
-                      ]}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
-                    </Text>
-                    <Image
-                      source={require("../../../assets/puffleBlue.png")}
-                      style={[
-                        styles.imageParticipantCard,
-                        pairing?.result === 1 && styles.imagePressed,
-                      ]}
-                    />
-                  </TouchableOpacity>
+              </View>
+            )
+              :
+              eventoFinalizado ? (
+                <View>
+                  <Text>Combates finalizados, aguarde o resultado!</Text>
                 </View>
-              );
-            }}
-            keyExtractor={(item, index) => {
-              if (!item || !item.playerOneId || !item.playerTwoId) {
-                return `default-key-${index}`;
-              }
-              return `${item.playerOneId}-${item.playerTwoId}`;
-            }}
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
-          />
+              )
+                :
+                event.hasStarted == false ? (
+                  <View>
+                    <Text>Aguarde a formatação de pairings!</Text>
+                  </View>
+                )
+
+                  : event.hasStarted == true ? (
+                    <View>
+                      <View style={styles.flatListContainer}>
+                        <FlatList
+                          data={playerDetails}
+                          style={styles.flatList}
+
+                          renderItem={({ item, index }) => {
+                            if (!item || !item.playerOne || !item.playerTwo) return null;
+                            const pairing = pairings[index];
+                            return (
+                              <View style={styles.myParticipantsPairing}>
+                                <TouchableOpacity
+
+                                  onPress={() => { console.log('TouchableOpacity pressed'); handleClickBattle(); handlePressUser(index, 0); }}
+                                  style={styles.cardPairing}
+                                >
+                                  <Image
+                                    source={require("../../../assets/puffleOrange.png")}
+                                    style={[
+                                      styles.imageParticipantCard,
+                                      pairing?.result === 0 && styles.imagePressed,
+                                    ]}
+                                  />
+                                  <Text
+                                    style={[
+                                      styles.nameTitle,
+                                      pairing?.result === 0 && styles.titlePressed,
+                                    ]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                  >
+                                    {item.playerOne.name}
+                                  </Text>
+                                </TouchableOpacity>
+                                <Text style={styles.vsTitle}> VS </Text>
+                                <TouchableOpacity
+                                  onPress={() => { handleClickBattle(); handlePressUser(index, 1); }}
+                                  style={styles.cardPairing}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.nameTitle,
+                                      pairing?.result === 1 && styles.titlePressed,
+                                    ]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                  >
+                                    {item.playerTwo ? item.playerTwo.name : 'jogador desconhecido'}
+                                  </Text>
+                                  <Image
+                                    source={require("../../../assets/puffleBlue.png")}
+                                    style={[
+                                      styles.imageParticipantCard,
+                                      pairing?.result === 1 && styles.imagePressed,
+                                    ]}
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            );
+                          }}
+                          keyExtractor={(item, index) => {
+                            if (!item || !item.playerOneId || !item.playerTwoId) {
+                              return `default-key-${index}`;
+                            }
+                            return `${item.playerOneId}-${item.playerTwoId}`;
+                          }}
+                          showsHorizontalScrollIndicator={false}
+                          scrollEnabled={false}
+                        />
+                      </View>
+
+                    </View>
+                  ) : null}
         </View>
-
-      </View>
-    ) : null}
-  </View>
-)}
-
-
-
-{selectedButton === 4 && (
-  <View>
-    <View style={styles.flatListContainer}>
-      <Text style={styles.titleParticipants}>Participantes</Text>
-      {event.playerIds.length === 0 ? (
-        <Text >Nenhum participante</Text>
-      ) : (
-        <FlatList
-          data={eventPlayers}
-          style={styles.flatList}
-          renderItem={({ item }) => (
-            <View style={styles.myParticipants}>
-              <Image
-                source={require("../../../assets/puffleOrange.png")}
-                style={styles.imageParticipant}
-              />
-              <Text>{item.name}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-        />
       )}
+
+
+
+      {selectedButton === 4 && (
+        <View>
+          <View style={styles.flatListContainer}>
+            <Text style={styles.titleParticipants}>Participantes</Text>
+            {event.playerIds.length === 0 ? (
+              <Text >Nenhum participante</Text>
+            ) : (
+              <FlatList
+                data={eventPlayers}
+                style={styles.flatList}
+                renderItem={({ item }) => (
+                  <View style={styles.myParticipants}>
+                    <Image
+                      source={require("../../../assets/puffleOrange.png")}
+                      style={styles.imageParticipant}
+                    />
+                    <Text>{item.name}</Text>
+                  </View>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                showsHorizontalScrollIndicator={false}
+              />
+            )}
+          </View>
+        </View>
+      )}
+
     </View>
-  </View>
-)}
 
-</View>
 
-  
   );
 }

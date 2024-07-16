@@ -22,7 +22,7 @@ const SubscribeButton: React.FC<SubscribeButtonProps> = ({
   handleInscricao,
   startEventX
 }) => {
-  const isDisabled = isLoading || (userRole === 'ROLE_PLAYER' && (isEventoFull || isUserSubscribed));
+  const isDisabled = isLoading || (userRole === 'ROLE_PLAYER' && (isEventoFull || isUserSubscribed)) || (userRole === 'ROLE_MANAGER' && eventHasStarted);
   //console.log("(SBCRBTTN) is evento full" + isEventoFull);
 
   return (
