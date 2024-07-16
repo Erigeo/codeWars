@@ -12,7 +12,7 @@ import styles from './EventoXStyles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { finalizeRound, resultsEvent, savePairings, startEvent } from '../../services/ManagerService';
+import { finalizeRound, resultEvent, savePairings, startEvent } from '../../services/ManagerService';
 import { EventResult, Player, PlayerResult } from "../../interfaces/User";
 import { getUserData } from "../../services/PlayerService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -58,6 +58,7 @@ export default function EventoX() {
   };
 
   const handlePressUser = (index, player) => {
+    console.log("sou chamado?")
     setPairings((prev) => {
      
       if (index < 0 || index >= prev.length) {
@@ -172,7 +173,7 @@ export default function EventoX() {
 
    async function eventResults() {
     try {
-      const result = await resultsEvent(id as string); // Supondo que 'id' está definido em algum lugar
+      const result = await resultEvent(id as string); // Supondo que 'id' está definido em algum lugar
       if (result) {
         setEventResult(result); 
         await eventResultChampion(result); // Passar o objeto PlayerResult diretamente
@@ -359,7 +360,7 @@ export default function EventoX() {
       <View>
         <Text>Sem mais pairings, gostaria de finalizar evento?!</Text>
         <View style={styles.positionButtonFinishRound}>
-          <Pressable style={styles.buttonFinishRound} onPress={() => {finalizarEvent(id as string); eventResults();}}>
+          <Pressable style={styles.buttonFinishRound} onPress={() => {finalizarEvent(id as string); eventResults(); handleClickBattle();}}>
             <Text style={styles.titleButtonFinishRound}>Finalizar Evento</Text>
           </Pressable>
         </View>
@@ -384,7 +385,8 @@ export default function EventoX() {
               return (
                 <View style={styles.myParticipantsPairing}>
                   <TouchableOpacity
-                    onPress={() => handlePressUser(index, 0)}
+                  
+                    onPress={() => {handlePressUser(index, 0)}}
                     style={styles.cardPairing}
                   >
                     <Image
@@ -528,13 +530,15 @@ export default function EventoX() {
           <FlatList
             data={playerDetails}
             style={styles.flatList}
+            
             renderItem={({ item, index }) => {
               if (!item || !item.playerOne || !item.playerTwo) return null;
               const pairing = pairings[index];
               return (
                 <View style={styles.myParticipantsPairing}>
                   <TouchableOpacity
-                    onPress={() => {handlePressUser(index, 0); handleClickBattle();}}
+                  
+                    onPress={() => { console.log('TouchableOpacity pressed');handleClickBattle(); handlePressUser(index, 0);}}
                     style={styles.cardPairing}
                   >
                     <Image
@@ -557,7 +561,7 @@ export default function EventoX() {
                   </TouchableOpacity>
                   <Text style={styles.vsTitle}> VS </Text>
                   <TouchableOpacity
-                    onPress={() => {handlePressUser(index, 1); handleClickBattle();}}
+                    onPress={() => { handleClickBattle(); handlePressUser(index, 1);}}
                     style={styles.cardPairing}
                   >
                     <Text

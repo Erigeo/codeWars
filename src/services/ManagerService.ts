@@ -140,11 +140,13 @@ export async function finishEvent(eventId: string) {
     return true;
   } catch (e) {
     if (e.response) {
+      console.log(e + 'erro mas diferente')
       console.error('Erro ao finalizar evento:', e.response.data);
       console.error('Status:', e.response.status);
       console.error('Cabeçalhos:', e.response.headers);
     } else {
       console.error('Erro ao finalizar evento:', e.message);
+      console.log(e)
     }
     return null;
   }
@@ -192,7 +194,7 @@ export async function startEvent(id: string) {
   }
 }
 
-export async function resultsEvent(eventId: string) {
+export async function resultEvent(eventId: string) {
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) {
@@ -211,12 +213,15 @@ export async function resultsEvent(eventId: string) {
     return resultado.data;
   } catch (e) {
     if (e.response) {
+      console.log(e + "diferentinho")
       console.error('Erro ao obter dados do final do evento:', e.response.data);
       console.error('Status:', e.response.status);
       console.error('Cabeçalhos:', e.response.headers);
     } else if (e.request) {
       console.error('Erro de requisição:', e.request);
+      console.log(e + "diferentinho2")
     } else {
+      console.log(e)
       console.error('Erro ao finalizar evento:', e.message);
     }
     return null;
