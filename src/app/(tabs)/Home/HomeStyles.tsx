@@ -13,6 +13,8 @@ export const styles = StyleSheet.create({
   },
   myeventsContainer: {
     padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   myevents: {
     flexDirection: 'row',
@@ -105,8 +107,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    //borderColor: 'green',
-    //borderWidth: 2
+    borderColor: 'green',
+    borderWidth: 2
   },
 
 
@@ -119,7 +121,7 @@ export const styles = StyleSheet.create({
   },
   buttonCreateEvents: {
     backgroundColor: '#364753',
-    width: '70%',
+    width: '80%',
     alignItems: 'center',
     height: 30,
     justifyContent: 'center',
